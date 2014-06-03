@@ -53,7 +53,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <property name="tabsClosable">
            <bool>false</bool>
@@ -91,6 +91,16 @@
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="memory">
+           <attribute name="title">
+            <string>memory</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QPlainTextEdit" name="plainTextEditMemory"/>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
         <item>
@@ -121,7 +131,7 @@
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>315</x>
+      <x>270</x>
       <y>104</y>
       <width>128</width>
       <height>181</height>
@@ -181,6 +191,9 @@
    </property>
    <property name="text">
     <string>单步运行</string>
+   </property>
+   <property name="shortcut">
+    <string>F7</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -249,6 +262,9 @@
    </property>
    <property name="text">
     <string>停止</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F5</string>
    </property>
   </action>
  </widget>

@@ -3,9 +3,11 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     MainWindow w;
+    app.setOrganizationName("FourUncles Inc.");
+    app.setApplicationName("MIPS Simulator");
     w.show();
 
-    return a.exec();
+    return app.exec();
 }
