@@ -14,8 +14,11 @@ TEMPLATE = app
 RESOURCES     = sim.qrc
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    mips.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    exp.h \
+    mips.h
 
 FORMS    += mainwindow.ui
