@@ -220,10 +220,10 @@ void MainWindow::assemble(){
         lineNumber++;
         qDebug() << "declare finished";
         if (single(insset, mipsLine.toStdString(), error, codeStr, code) == 0) {
-            codesOut += (codeStr.c_str() + '\n');
+            codesOut = codesOut + codeStr.c_str() + '\n';
         } else {
-            codesOut += (codeStr.c_str() + '\n');
-            errorOut += ("Line:" + QString::number(lineNumber) + " " + error.c_str() + '\n');
+            codesOut = codesOut + codeStr.c_str() + '\n';
+            errorOut = errorOut + "Line:" + QString::number(lineNumber) + " " + error.c_str() + '\n';
         }
 
     }
