@@ -59,7 +59,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <property name="tabsClosable">
            <bool>false</bool>
@@ -76,8 +76,8 @@
              <widget class="QPlainTextEdit" name="plainTextEditMips">
               <property name="plainText">
                <string>add $t1, $t2, $t3
-
-</string>
+add $t1, $t2, $t3
+add $t1, $t2, $t3</string>
               </property>
              </widget>
             </item>
@@ -110,12 +110,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QTextBrowser" name="textBrowserDebug">
+         <widget class="QPlainTextEdit" name="plainTextEditDebug">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
             <height>100</height>
            </size>
+          </property>
+          <property name="readOnly">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -156,11 +159,14 @@
    </widget>
    <widget class="QMenu" name="menuExcute">
     <property name="title">
-     <string>调试</string>
+     <string>运行</string>
     </property>
+    <addaction name="separator"/>
     <addaction name="actionRun"/>
     <addaction name="actionRunto"/>
     <addaction name="actionStop"/>
+    <addaction name="actionAssemble"/>
+    <addaction name="actionDisassemble"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -186,6 +192,8 @@
    <addaction name="actionNew"/>
    <addaction name="actionSave"/>
    <addaction name="actionOpen"/>
+   <addaction name="separator"/>
+   <addaction name="actionAssemble"/>
    <addaction name="separator"/>
    <addaction name="actionRun"/>
    <addaction name="actionStop"/>
@@ -271,6 +279,23 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F5</string>
+   </property>
+  </action>
+  <action name="actionAssemble">
+   <property name="icon">
+    <iconset resource="sim.qrc">
+     <normaloff>:/images/build.png</normaloff>:/images/build.png</iconset>
+   </property>
+   <property name="text">
+    <string>汇编</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionDisassemble">
+   <property name="text">
+    <string>反汇编</string>
    </property>
   </action>
  </widget>

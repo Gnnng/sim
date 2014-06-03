@@ -2,12 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "newmips.h"
 
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
+class QTextBrowser;
 QT_END_NAMESPACE
-
 
 namespace Ui {
 class MainWindow;
@@ -31,6 +31,9 @@ private slots:
     bool saveAs();
     void about();
     void documentWasModified();
+    void assemble();
+    void disassemble();
+    void singleStep();
 
 private:
     bool maybeSave();
@@ -40,9 +43,12 @@ private:
     QString strippedName(const QString &fullFileName);
 
     QPlainTextEdit *textEdit;
+    QPlainTextEdit *codeEdit;
+    QPlainTextEdit *infoEdit;
     QString curFile;
     Ui::MainWindow *ui;
 
+    INSSET insset;
 };
 
 #endif // MAINWINDOW_H

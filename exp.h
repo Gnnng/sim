@@ -1,10 +1,3 @@
-//
-//  main.c
-//  expression
-//
-//  Created by zyhc on 13-6-5.
-//  Copyright (c) 2013年 zyhc. All rights reserved.
-//
 #ifndef __mips__exp__
 #define __mips__exp__
 
@@ -80,7 +73,7 @@ double expression(char* exp)
                     num[nk]=-num[nk];
                     negflag=0;
                 }
-                
+
             }
         }
         if (*p==')')

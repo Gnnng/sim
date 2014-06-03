@@ -2,13 +2,19 @@
 #include "ui_mainwindow.h"
 #include <QtWidgets>
 
-#include <iostream>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    // read instructions
+    init("e:\\Qtworkspace\\sim\\ins.txt", insset);
+
     ui->setupUi(this);
     textEdit = ui->plainTextEditMips;
+    codeEdit = ui->plainTextEditMachine;
+    infoEdit = ui->plainTextEditDebug;
+
     connect(textEdit->document(), SIGNAL(contentsChanged()),
             this, SLOT(documentWasModified()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newFile()));
@@ -17,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(saveAs()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
-
+    connect(ui->actionAssemble, SIGNAL(triggered()), this, SLOT(assemble()));
     setCurrentFile("");
     setUnifiedTitleAndToolBarOnMac(true);
 }
@@ -78,8 +84,9 @@ bool MainWindow::saveAs()
 
     if (files.isEmpty())
         return false;
-
+    qDebug() << files.at(0);
     return saveFile(files.at(0));
+
 }
 //! [12]
 
@@ -196,4 +203,55 @@ QString MainWindow::strippedName(const QString &fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
 }
-//! [49]
+
+void MainWindow::assemble(){
+    QString mips = textEdit->toPlainText();
+    QStringList mipsLines;
+    QString mipsLine;
+    int lineNumber = 0;
+    QString codesOut;
+    QString errorOut;
+    mipsLines = mips.split("\n");
+    foreach(mipsLine, mipsLines) {
+        string codeStr;
+        string error;
+        int code;
+
+        lineNumber++;
+        qDebug() << "declare finished";
+        if (single(insset, mipsLine.toStdString(), error, codeStr, code) == 0) {
+            codesOut += (codeStr.c_str() + '\n');
+        } else {
+            codesOut += (codeStr.c_str() + '\n');
+            errorOut += ("Line:" + QString::number(lineNumber) + " " + error.c_str() + '\n');
+        }
+
+    }
+    qDebug() << codesOut;
+    qDebug() << errorOut;
+#ifndef QT_NO_CURSOR
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+#endif
+    codeEdit->setPlainText(codesOut);
+    infoEdit->setPlainText(errorOut);
+#ifndef QT_NO_CURSOR
+    QApplication::restoreOverrideCursor();
+#endif
+
+//#ifndef QT_NO_CURSOR
+//    QApplication::setOverrideCursor(Qt::WaitCursor);
+//#endif
+
+//#ifndef QT_NO_CURSOR
+//    QApplication::restoreOverrideCursor();
+//#endif
+
+}
+
+void MainWindow::disassemble(){
+
+}
+
+void MainWindow::singleStep(){
+
+}
