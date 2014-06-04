@@ -1,3 +1,11 @@
+//
+//  newmips.cpp
+//  mips
+//
+//  Created by zyhc on 14-6-3.
+//  Copyright (c) 2014年 zyhc. All rights reserved.
+//
+
 #include "newmips.h"
 #include <iostream>
 #include <string>
@@ -16,6 +24,10 @@ singleins::singleins()
 std::string singleins::address(int ii,int x)
 {
     std::string ret="";
+    if (ii<0)
+    {
+        ii = ii & 0x7FFFFFFF;
+    }
     while(ii>0)
     {
         std::string tmp;
@@ -24,8 +36,15 @@ std::string singleins::address(int ii,int x)
         ii=ii/2;
     }
     //cout<<ret<<endl;
-    ret.insert(ret.begin(),x-ret.length(),'0');
-    //cout<<ret<<endl;
+    if (ret.length()<=x)
+    {
+        ret.insert(ret.begin(),x-ret.length(),'0');
+    }
+    else
+    {
+        ret.erase(0,ret.length()-x);
+    }
+    //std::cout<<ret<<std::endl;
     return ret;
 }
 std::string singleins::address(std::string reg)

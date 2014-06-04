@@ -1,3 +1,11 @@
+//
+//  multiins.cpp
+//  mips
+//
+//  Created by zyhc on 14-6-4.
+//  Copyright (c) 2014年 zyhc. All rights reserved.
+//
+
 #include "multiins.h"
 #include "newmips.h"
 #include <string>
@@ -36,8 +44,22 @@ void multiins::handle()
             {
                 std::stringstream ss;
                 std::string s;
-                ss << tipset[j].num;
-                ss >> s;
+                
+                ss.str("");
+                ss<<instructions[i];
+                std::string ope;
+                ss>>ope;
+                ss.str("");
+                if (ope=="beq"||ope=="bne")
+                {
+                    ss<<tipset[j].num-i;
+                }
+                else
+                {
+                    ss << tipset[j].num;
+                }
+                s=ss.str();
+                std::cout<<s<<std::endl;
                 instructions[i].replace(k,tipset[j].name.size(),s);
             }
            // std::cout<<instructions[i]<<std::endl;
@@ -50,14 +72,16 @@ std::vector<std::string> multiins::translate(std::vector<std::string> &reterror)
     singleins oneins;
     for (int i=0;i<instructions.size();i++)
     {
-
+        
         std::string error,oneresult;
         int insnum;
         //std::cout<<instructions[i]<<std::endl;
         int ret=oneins.single(instructions[i], error, oneresult, insnum);
+        std::stringstream lineerror;
+        lineerror<<i<<" "<<error;
         if (ret==1)
         {
-            reterror.push_back(error);
+            reterror.push_back(lineerror.str());
         }else
         //if (ret==0)
         {

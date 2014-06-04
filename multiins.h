@@ -1,3 +1,11 @@
+//
+//  multiins.h
+//  mips
+//
+//  Created by zyhc on 14-6-4.
+//  Copyright (c) 2014年 zyhc. All rights reserved.
+//
+
 #ifndef __mips__multiins__
 #define __mips__multiins__
 
