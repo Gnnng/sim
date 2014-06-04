@@ -15,11 +15,15 @@ RESOURCES     = sim.qrc
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    newmips.cpp
+    newmips.cpp \
+    cpu.cpp \
+    multiins.cpp
 
 HEADERS  += mainwindow.h \
     newmips.h \
-    exp.h
+    exp.h \
+    cpu.h \
+    multiins.h
 
 FORMS    += mainwindow.ui
 

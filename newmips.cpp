@@ -5,20 +5,20 @@
 #include <fstream>
 #include <vector>
 #include "exp.h"
-#define R 1
-#define I 2
-#define J 3
-using namespace std;
-const string regname[32]={"zero","at","v0","v1","a0","a1","a2","a3",
-    "t0","t1","t2","t3","t4","t5","t6","t7",
-    "s0","s1","s2","s3","s4","s5","s6","s7",
-    "t8","t9","k0","k1","gp","sp","fp","ra"};
-string address(int ii,int x)
+singleins::singleins(std::string filename)
 {
-    string ret="";
+    init(filename);
+}
+singleins::singleins()
+{
+    init();
+}
+std::string singleins::address(int ii,int x)
+{
+    std::string ret="";
     while(ii>0)
     {
-        string tmp;
+        std::string tmp;
         tmp.insert(tmp.begin(),(char)(ii%2)+'0');
         ret=tmp+ret;
         ii=ii/2;
@@ -28,9 +28,9 @@ string address(int ii,int x)
     //cout<<ret<<endl;
     return ret;
 }
-string address(string reg)
+std::string singleins::address(std::string reg)
 {
-    string ret="";
+    std::string ret="";
     reg.erase(reg.begin(),reg.begin()+1);
     // cout<<reg<<endl;
     for (int i=0;i<32;i++)
@@ -44,10 +44,10 @@ string address(string reg)
     }
     return "XXX";
 }
-void init(string filename,vector <ins> &insset)
+void singleins::init(std::string filename)
 {
-    string ope;
-    ifstream ifile(filename);
+    std::string ope;
+    std::ifstream ifile(filename);
     while (ifile>>ope)
     {
         ins newins;
@@ -56,15 +56,32 @@ void init(string filename,vector <ins> &insset)
         insset.push_back(newins);
     }
 }
-int single(vector <ins> insset,string sins,string &reterror,string &result,int &ins)
+void singleins::init()
 {
-    string ope;
+    std::string ope;
+    std::stringstream istring;
+    for (int i=0;i<31;i++)
+    {
+        std::string temp;
+        temp=datain[i]+"\n";
+        istring.clear();
+        istring<<datain[i];
+        istring>>ope;
+        ins newins;
+        newins.ope=ope;
+        getline(istring,newins.format);
+        insset.push_back(newins);
+    }
+}
+int singleins::single(std::string sins,std::string &reterror,std::string &result,int &ins)
+{
+    std::string ope;
     int insnum;
-    string typec;
-    stringstream res;
+    std::string typec;
+    std::stringstream res;
     res.clear();
-    stringstream ss;
-    string s2;
+    std::stringstream ss;
+    std::string s2;
     s2=sins;
     for (int i=0;i<s2.length();i++)
     {
@@ -74,8 +91,13 @@ int single(vector <ins> insset,string sins,string &reterror,string &result,int &
     ss.clear();
     ss<<s2;
     ss>>ope;
+    if (ope=="")
+    {
+        return -1;
+    }
     insnum=-1;
-    for (int i=0;i<insset.size();i++)
+    int i;
+    for (i=0;i<insset.size();i++)
     {
         //cout<<insset[i].ope<<endl;
         if (ope==insset[i].ope)
@@ -84,19 +106,23 @@ int single(vector <ins> insset,string sins,string &reterror,string &result,int &
             break;
         }
     }
-    int l = insset.size();
-    stringstream st;
+    if (i==insset.size())
+    {
+        reterror="unkown operator:'"+ope+"'";
+        return 1;
+    }
+    std::stringstream st;
     st<<insset[insnum].format;
     st>>typec;
-    string todo;
+    std::string todo;
     char exp[100];
     int py;
     if (typec=="R")
     {
-        string func;
-        string reg[3];
+        std::string func;
+        std::string reg[3];
         int regnum;
-        string shamt;
+        std::string shamt;
         st>>func;
         for (int i=0;i<3;i++)
         {
@@ -117,13 +143,13 @@ int single(vector <ins> insset,string sins,string &reterror,string &result,int &
         {
             ss>>exp;
             py=(int)expression(exp);
-            shamt=address(py,6);
+            shamt=address(py,5);
         }
         if (todo=="w")
         {
-            shamt="000000";
+            shamt="00000";
         }
-        string add[3];
+        std::string add[3];
         for (int i=0;i<3;i++)
         {
             add[i]=address(reg[i]);
@@ -137,9 +163,9 @@ int single(vector <ins> insset,string sins,string &reterror,string &result,int &
     }
     if (typec=="I")
     {
-        string reg[2];
-        string add[2];
-        string begin;
+        std::string reg[2];
+        std::string add[2];
+        std::string begin;
         int regnum;
         st>>begin;
         for (int i=0;i<3;i++)
@@ -174,7 +200,7 @@ int single(vector <ins> insset,string sins,string &reterror,string &result,int &
     }
     if (typec=="J")
     {
-        string begin;
+        std::string begin;
         st>>begin;
         ss>>exp;
         py=(int)expression(exp);
@@ -188,3 +214,4 @@ int single(vector <ins> insset,string sins,string &reterror,string &result,int &
     }
     return 0;
 }
+

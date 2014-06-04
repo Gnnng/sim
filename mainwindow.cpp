@@ -1,20 +1,23 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QtWidgets>
-
+#include "multiins.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     // read instructions
-    init("e:\\Qtworkspace\\sim\\ins.txt", insset);
+//    init("e:\\Qtworkspace\\sim\\ins.txt", insset);
 
     ui->setupUi(this);
     textEdit = ui->plainTextEditMips;
     codeEdit = ui->plainTextEditMachine;
     infoEdit = ui->plainTextEditDebug;
+    cpuEdit = ui->plainTextEditStatus;
+    memEdit = ui->plainTextEditMemory;
 
+    multiins multi;
     connect(textEdit->document(), SIGNAL(contentsChanged()),
             this, SLOT(documentWasModified()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newFile()));
@@ -24,8 +27,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionAssemble, SIGNAL(triggered()), this, SLOT(assemble()));
+    connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(singleStep()));
+    connect(ui->actionStop, SIGNAL(trigered()), this, SLOT(stopCPU()));
     setCurrentFile("");
     setUnifiedTitleAndToolBarOnMac(true);
+
+    cpuRunning = false;
 }
 
 MainWindow::~MainWindow()
@@ -84,7 +91,6 @@ bool MainWindow::saveAs()
 
     if (files.isEmpty())
         return false;
-    qDebug() << files.at(0);
     return saveFile(files.at(0));
 
 }
@@ -204,6 +210,16 @@ QString MainWindow::strippedName(const QString &fullFileName)
     return QFileInfo(fullFileName).fileName();
 }
 
+int convert(string line) {
+    int code = 0;
+    for(int i = 0; i < 32; i++) {
+        if (line[i] == '1') {
+            code |= (1 << (31-i));
+        }
+    }
+    return code;
+}
+
 void MainWindow::assemble(){
     QString mips = textEdit->toPlainText();
     QStringList mipsLines;
@@ -212,21 +228,47 @@ void MainWindow::assemble(){
     QString codesOut;
     QString errorOut;
     mipsLines = mips.split("\n");
+
+    multiins multi;
+    machineCode.clear();
     foreach(mipsLine, mipsLines) {
-        string codeStr;
-        string error;
-        int code;
-
-        lineNumber++;
-        qDebug() << "declare finished";
-        if (single(insset, mipsLine.toStdString(), error, codeStr, code) == 0) {
-            codesOut = codesOut + codeStr.c_str() + '\n';
-        } else {
-            codesOut = codesOut + codeStr.c_str() + '\n';
-            errorOut = errorOut + "Line:" + QString::number(lineNumber) + " " + error.c_str() + '\n';
-        }
-
+        multi.add(mipsLine.toStdString());
     }
+    multi.handle();
+    vector<string> results, errors;
+    results = multi.translate(errors);
+
+    for(int i = 0; i < results.size(); i++) {
+        codesOut = codesOut + results[i].c_str() + '\n';
+        if (results[i].size() == 0)
+            continue;
+        machineCode.push_back(convert(results[i]));
+        qDebug() << convert(results[i]);
+    }
+
+    for(int i = 0; i < errors.size(); i++) {
+        errorOut = errorOut + "Line:" + QString::number(i) + " " + errors[i].c_str() + '\n';
+    }
+
+
+//    foreach(mipsLine, mipsLines) {
+//        string codeStr;
+//        string error;
+//        int code;
+
+//        lineNumber++;
+//        qDebug() << "declare finished";
+
+//        if (single(insset, mipsLine.toStdString(), error, codeStr, code) == 0) {
+//            codesOut = codesOut + codeStr.c_str() + '\n';
+//            machineCode.push_back(*((unsigned int *)&code));
+//            machineCode.push_back(code);
+//        } else {
+//            codesOut = codesOut + codeStr.c_str() + '\n';
+//            errorOut = errorOut + "Line:" + QString::number(lineNumber) + " " + error.c_str() + '\n';
+//        }
+
+//    }
     qDebug() << codesOut;
     qDebug() << errorOut;
 #ifndef QT_NO_CURSOR
@@ -253,5 +295,67 @@ void MainWindow::disassemble(){
 }
 
 void MainWindow::singleStep(){
+    if (!cpuRunning) {
+        startCPU();
+        cpuRunning = true;
+    }
+    cpu->run(1);
+    if (cpu->PC >= cpu->IR.size()) {
+        stopCPU();
+        cpuRunning = false;
+    }
+    QString info;
+    info.append("PC\t" + QString::number(cpu->PC, 16).toUpper());
+    info.append("\n");
+    info.append("Regs\n");
+    for(int i = 0; i < 32; i++) {
+        info = info + "reg[" + QString::number(i) + "]\t" + QString::number(cpu->reg[i], 10) + "\n";
+    }
+    #ifndef QT_NO_CURSOR
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+    #endif
+    cpuEdit->setPlainText(info);
+    #ifndef QT_NO_CURSOR
+        QApplication::restoreOverrideCursor();
+    #endif
 
+    QString mem;
+    for(int i = 0; i < 10; i++) {
+        mem = mem + "0x" + QString::number(i, 16) + "\t" + QString::number(cpu->memory[i], 16) + "\n";
+    }
+    #ifndef QT_NO_CURSOR
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+    #endif
+    memEdit->setPlainText(mem);
+    #ifndef QT_NO_CURSOR
+        QApplication::restoreOverrideCursor();
+    #endif
+
+}
+
+void MainWindow::startCPU(){
+//    QString fileName("e:\\Qtworkspace\\sim\\ins.coe");
+//    QFile file(fileName);
+//    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+//        QMessageBox::warning(this, tr("Application"),
+//                             tr("Cannot write file %1:\n%2.")
+//                             .arg(fileName)
+//                             .arg(file.errorString()));
+//        return;
+//    }
+
+//    QTextStream out(&file);
+//#ifndef QT_NO_CURSOR
+//    QApplication::setOverrideCursor(Qt::WaitCursor);
+//#endif
+//    out << codeEdit->toPlainText();
+//#ifndef QT_NO_CURSOR
+//    QApplication::restoreOverrideCursor();
+//#endif
+    cpu = new CPU();
+    cpu->init(machineCode);
+}
+
+void MainWindow::stopCPU(){
+    delete cpu;
 }

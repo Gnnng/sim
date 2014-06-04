@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "newmips.h"
+#include "cpu.h"
+#include <vector>
 
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
@@ -34,7 +36,8 @@ private slots:
     void assemble();
     void disassemble();
     void singleStep();
-
+    void startCPU();
+    void stopCPU();
 private:
     bool maybeSave();
     void loadFile(const QString &fileName);
@@ -45,9 +48,15 @@ private:
     QPlainTextEdit *textEdit;
     QPlainTextEdit *codeEdit;
     QPlainTextEdit *infoEdit;
-    QString curFile;
-    Ui::MainWindow *ui;
+    QPlainTextEdit *cpuEdit;
+    QPlainTextEdit *memEdit;
 
+    QString curFile;
+    QStringList mipsLines, codeLines;
+    std::vector<int> machineCode;
+    Ui::MainWindow *ui;
+    CPU *cpu;
+    bool cpuRunning;
     INSSET insset;
 };
 
