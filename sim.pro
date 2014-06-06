@@ -17,13 +17,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     newmips.cpp \
     cpu.cpp \
-    multiins.cpp
+    multiins.cpp \
+    highlighter.cpp
 
 HEADERS  += mainwindow.h \
     newmips.h \
     exp.h \
     cpu.h \
-    multiins.h
+    multiins.h \
+    highlighter.h
 
 FORMS    += mainwindow.ui
 

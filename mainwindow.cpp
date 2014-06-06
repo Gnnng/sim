@@ -2,7 +2,8 @@
 #include "ui_mainwindow.h"
 #include <QtWidgets>
 #include "multiins.h"
-
+#include "highlighter.h"
+#include <string>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -28,9 +29,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionAssemble, SIGNAL(triggered()), this, SLOT(assemble()));
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(singleStep()));
-    connect(ui->actionStop, SIGNAL(trigered()), this, SLOT(stopCPU()));
+    connect(ui->actionStop, SIGNAL(triggered()), this, SLOT(stopCPU()));
     setCurrentFile("");
     setUnifiedTitleAndToolBarOnMac(true);
+
+    QFont font;
+    font.setFamily("Courier");
+    font.setFixedPitch(true);
+    font.setPointSize(8);
+
+    textEdit->setFont(font);
+
+    highlighter = new Highlighter(textEdit->document());
 
     cpuRunning = false;
 }
@@ -221,6 +231,10 @@ int convert(string line) {
 }
 
 void MainWindow::assemble(){
+    if (cpuRunning) {
+        stopCPU();
+    }
+
     QString mips = textEdit->toPlainText();
     QStringList mipsLines;
     QString mipsLine;
@@ -300,12 +314,14 @@ void MainWindow::singleStep(){
         cpuRunning = true;
     }
     cpu->run(1);
-    QString info;
-    info.append("PC\t" + QString::number(cpu->PC, 16).toUpper());
-    info.append("\n");
-    info.append("Regs\n");
+    QString info, pc, regs;
+    pc.sprintf("PC\t\t%08x\n", cpu->PC);
+    info.append(pc);
+    std::string regname[32]={"zero","at","v0","v1","a0","a1","a2","a3","t0","t1","t2","t3","t4","t5","t6","t7","s0","s1","s2","s3","s4","s5","s6","s7","t8","t9","k0","k1","gp","sp","fp","ra"};
     for(int i = 0; i < 32; i++) {
-        info = info + "reg[" + QString::number(i) + "]\t" + QString::number(cpu->reg[i], 10) + "\n";
+        regs.sprintf("$%s\treg[%2d]\t%08x\n", regname[i].c_str(), i, cpu->reg[i]);
+        info.append(regs);
+//        info = info + "reg[" + QString::number(i) + "]\t" + QString::number(cpu->reg[i], 16) + "\n";
     }
     #ifndef QT_NO_CURSOR
         QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -315,9 +331,11 @@ void MainWindow::singleStep(){
         QApplication::restoreOverrideCursor();
     #endif
 
-    QString mem;
+    QString mem, m;
     for(int i = 0; i < 10; i++) {
-        mem = mem + "0x" + QString::number(i, 16) + "\t" + QString::number(cpu->memory[i], 16) + "\n";
+        m.sprintf("[%08x]\t%08x\n", i, cpu->memory[i]);
+        mem.append(m);
+//        mem = mem + "0x" + QString::number(i, 16) + "\t" + QString::number(cpu->memory[i], 16) + "\n";
     }
     #ifndef QT_NO_CURSOR
         QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -327,35 +345,26 @@ void MainWindow::singleStep(){
         QApplication::restoreOverrideCursor();
     #endif
 
-    if (cpu->PC >= cpu->IR.size()) {
+    if ((cpu->PC)/4 >= cpu->IR.size()) {
         stopCPU();
-        cpuRunning = false;
     }
 }
 
 void MainWindow::startCPU(){
-//    QString fileName("e:\\Qtworkspace\\sim\\ins.coe");
-//    QFile file(fileName);
-//    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-//        QMessageBox::warning(this, tr("Application"),
-//                             tr("Cannot write file %1:\n%2.")
-//                             .arg(fileName)
-//                             .arg(file.errorString()));
-//        return;
-//    }
-
-//    QTextStream out(&file);
-//#ifndef QT_NO_CURSOR
-//    QApplication::setOverrideCursor(Qt::WaitCursor);
-//#endif
-//    out << codeEdit->toPlainText();
-//#ifndef QT_NO_CURSOR
-//    QApplication::restoreOverrideCursor();
-//#endif
     cpu = new CPU();
     cpu->init(machineCode);
+    qDebug() << "PC width is" << sizeof(cpu->PC);
 }
 
 void MainWindow::stopCPU(){
+    #ifndef QT_NO_CURSOR
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+    #endif
+    cpuEdit->setPlainText("");
+    #ifndef QT_NO_CURSOR
+        QApplication::restoreOverrideCursor();
+    #endif
+
+    cpuRunning = false;
     delete cpu;
 }

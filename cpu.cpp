@@ -6,37 +6,24 @@ void CPU::init(vector<int> _IR){
 //    IR.clear(); //##
     IR = _IR;
     memset(reg, 0, sizeof(reg));
-    //Load All Instruction into IR
-//    FILE *COE = fopen(FileName.c_str(), "r");
-//    assert(COE != NULL);
-//    static char line[100];
-//    while(fscanf(COE, "%s", line) != EOF){
-//        int len = strlen(line);
-//        assert(len == 32);
-//        int now = 0;
-//        for (int i = 0; i < len; i++){
-//            assert(line[i] == '0' || line[i] == '1');
-//            if (line[i] == '1') now |= 1 << (31 - i);
-//        }
-//        IR.push_back(now);
-//    }
-//    fclose(COE);
 }
 
 void CPU::run(int step, int line){
     //step = 0 && line = 0 means RUN ALL
     //step = 1 means RUN ONCE
     //line = X, means Breakpoint at line X;
-    int op, rs, rt, rd, sft, func, adr, dat;
-    while(PC < IR.size()){
-        int now = IR[PC];
+    int op, rs, rt, rd, sft, func, adr, dat0, dat1;
+    while((PC >> 2) < IR.size()){
+        int now = IR[PC >> 2];
         op = (now >> 26) & 0x3F;		//6
         rs = (now >> 21) & 0x1F;		//5
         rt = (now >> 16) & 0x1F;		//5
         rd = (now >> 11) & 0x1F;    	//5
         sft = (now >> 6) & 0x1F;        //5
         func = now & 0x3F;				//6
-        dat = (now & 0xFFFF);			//16
+        dat0 = (now & 0xFFFF);			//16
+        dat1 = dat0;
+        if (dat0 & (1 << (16 - 1))) dat1 |= 0xFFFF0000;
         adr = (now & 0x3FFFFFF); 		//26
         //printf("%d\n", op);
         switch(op){
@@ -45,6 +32,7 @@ void CPU::run(int step, int line){
                 switch(func){
                     //10 0000 add
                     case 0x20:
+                        //puts("add");
                         reg[rd] = reg[rs] + reg[rt];
                         ///CF & OF
                         break;
@@ -136,97 +124,101 @@ void CPU::run(int step, int line){
 
             //00 1000 addi
             case 0x08:
-                reg[rt]  = reg[rs] + dat;
+                reg[rt]  = reg[rs] + dat1;
                 //OF & CF;
                 break;
 
             //00 1001 addiu
             case 0x09:
-                reg[rt] = reg[rs] + dat;
+                reg[rt] = reg[rs] + dat0;
                 break;
 
             //00 1100 andi
             case 0x0C:
-                reg[rt] = reg[rs] & dat;
+                reg[rt] = reg[rs] & dat0;
                 break;
 
             //00 0100 beq
             case 0x04:
-                if (reg[rt] == reg[rs]) PC += dat;///
+                //puts("beq");
+                if (reg[rt] == reg[rs]) PC += dat1 << 2;///
                 break;
 
             //00 0101 bne
             case 0x05:
-                if (reg[rt] != reg[rs]) PC += dat;///
+                if (reg[rt] != reg[rs]) PC += dat1 << 2;///
                 break;
 
             //10 0000 lb
             case 0x20:
-                reg[rt] = memory[reg[rs] + dat];
+                reg[rt] = memory[reg[rs] + dat1];
                 break;
             //10 1000 sb
             case 0x28:
-                memory[reg[rs] + dat] = reg[rt] & 0xFF;
+                memory[reg[rs] + dat1] = reg[rt] & 0xFF;
                 break;
 
             //10 0011 lw
             case 0x23:
-                reg[rt] = (memory[reg[rs] + dat + 0] << 24)
-                         |(memory[reg[rs] + dat + 1] << 16)
-                         |(memory[reg[rs] + dat + 2] << 8)
-                         |(memory[reg[rs] + dat + 3] << 0);
+                //puts("lw");
+                reg[rt] = (memory[reg[rs] + dat1 + 0] << 24)
+                         |(memory[reg[rs] + dat1 + 1] << 16)
+                         |(memory[reg[rs] + dat1 + 2] << 8)
+                         |(memory[reg[rs] + dat1 + 3] << 0);
                 break;
             //10 1011 sw
             case 0x2B:
-                memory[reg[rs] + dat + 0] = ((reg[rt] >> 24) & 0xFF);
-                memory[reg[rs] + dat + 1] = ((reg[rt] >> 16) & 0xFF);
-                memory[reg[rs] + dat + 2] = ((reg[rt] >> 8)  & 0xFF);
-                memory[reg[rs] + dat + 3] = ((reg[rt] >> 0)  & 0xFF);
+                memory[reg[rs] + dat1 + 0] = ((reg[rt] >> 24) & 0xFF);
+                memory[reg[rs] + dat1 + 1] = ((reg[rt] >> 16) & 0xFF);
+                memory[reg[rs] + dat1 + 2] = ((reg[rt] >> 8)  & 0xFF);
+                memory[reg[rs] + dat1 + 3] = ((reg[rt] >> 0)  & 0xFF);
                 break;
 
             //00 1101 ori
             case 0x0D:
-                reg[rt] = reg[rs] | dat;
+                reg[rt] = reg[rs] | dat0;
                 break;
 
             //00 1111 lui:
             case 0x0F:
-                reg[rt] = dat << 16;
+                reg[rt] = dat0 << 16;
                 break;
 
             //00 1110 xori
             case 0x0E:
-                reg[rt] = reg[rs] ^ dat;
+                reg[rt] = reg[rs] ^ dat0;
                 break;
 
             //00 1010 slti:
             case 0x0A:
-                reg[rt] = (reg[rs] < dat);
+                reg[rt] = (reg[rs] < dat1);
                 break;
 
             //00 1011 sltiu:
             case 0x0B:
-                reg[rt] = (reg[rs] < (unsigned int)(dat));
+                reg[rt] = (reg[rs] < dat0);
                 break;
 
             //End of I-type
 
             //00 0010 j
             case 0x02:
-                PC = PC & 0xF0000000 | adr;
+                //puts("j");
+                PC = PC & 0xF0000000 | ((adr - 1) << 2);
                 break;
 
             //00 0011 jal
             case 0x03:
-                reg[31] = PC + 1; 	//$ra
-                PC = PC & 0xF0000000 | adr;
+                reg[31] = PC + 4; 	//$ra
+                PC = PC & 0xF0000000 | ((adr - 1) << 2);
                 break;
 
             default :
                 assert(0);
             //End of J-type
         }
-        PC += 1;
-        if (step || PC == line) break;
+        PC += 4;
+        if (step || (PC >> 2) == line) break;
     }
 }
+

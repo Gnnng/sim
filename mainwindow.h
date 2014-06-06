@@ -5,6 +5,7 @@
 #include "newmips.h"
 #include "cpu.h"
 #include <vector>
+#include "highlighter.h"
 
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
@@ -45,6 +46,7 @@ private:
     void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
 
+    Highlighter *highlighter;
     QPlainTextEdit *textEdit;
     QPlainTextEdit *codeEdit;
     QPlainTextEdit *infoEdit;
