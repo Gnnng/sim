@@ -300,10 +300,6 @@ void MainWindow::singleStep(){
         cpuRunning = true;
     }
     cpu->run(1);
-    if (cpu->PC >= cpu->IR.size()) {
-        stopCPU();
-        cpuRunning = false;
-    }
     QString info;
     info.append("PC\t" + QString::number(cpu->PC, 16).toUpper());
     info.append("\n");
@@ -331,6 +327,10 @@ void MainWindow::singleStep(){
         QApplication::restoreOverrideCursor();
     #endif
 
+    if (cpu->PC >= cpu->IR.size()) {
+        stopCPU();
+        cpuRunning = false;
+    }
 }
 
 void MainWindow::startCPU(){

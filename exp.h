@@ -80,7 +80,6 @@ double expression(char* exp)
                     num[nk]=-num[nk];
                     negflag=0;
                 }
-                
             }
         }
         if (*p==')')
