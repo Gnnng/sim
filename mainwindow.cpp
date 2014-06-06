@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     textEdit->setFont(font);
 
-    highlighter = new Highlighter(textEdit->document());
+//    highlighter = new Highlighter(textEdit->document());
 
     cpuRunning = false;
 }
