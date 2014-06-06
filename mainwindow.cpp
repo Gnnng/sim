@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     font.setFixedPitch(true);
     font.setPointSize(8);
 
-    textEdit->setFont(font);
+//    textEdit->setFont(font);
 
 //    highlighter = new Highlighter(textEdit->document());
 
