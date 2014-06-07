@@ -33,14 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setCurrentFile("");
     setUnifiedTitleAndToolBarOnMac(true);
 
-    QFont font;
-    font.setFamily("Courier");
-    font.setFixedPitch(true);
-    font.setPointSize(8);
-
-    textEdit->setFont(font);
-
-//    highlighter = new Highlighter(textEdit->document());
+    highlighter = new Highlighter(textEdit->document());
 
     cpuRunning = false;
 }
@@ -313,6 +306,7 @@ void MainWindow::singleStep(){
         startCPU();
         cpuRunning = true;
     }
+    highlightCurrentLine(cpu->PC/4 + 1);
     cpu->run(1);
     QString info, pc, regs;
     pc.sprintf("PC\t\t%08x\n", cpu->PC);
@@ -344,10 +338,43 @@ void MainWindow::singleStep(){
     #ifndef QT_NO_CURSOR
         QApplication::restoreOverrideCursor();
     #endif
-
     if ((cpu->PC)/4 >= cpu->IR.size()) {
         stopCPU();
     }
+}
+
+void MainWindow::highlightCurrentLine(int lineCount) {
+    QList<QTextEdit::ExtraSelection> extraSelections;
+    QTextEdit::ExtraSelection selection;
+    QColor lineColor = QColor(Qt::green).lighter(160);
+
+    qDebug() << textEdit->textCursor().position();
+    QString content = textEdit->toPlainText();
+    int pos = content.size();
+    for(int i = 0; i < content.size(); i++) {
+        if (content[i] == '\n')
+            lineCount--;
+        if (lineCount == 0) {
+            pos = i;
+            break;
+        }
+    }
+    QTextCursor cur = textEdit->textCursor();
+    cur.setPosition(pos);
+    textEdit->setTextCursor(cur);
+
+//    cur = codeEdit->textCursor();
+//    cur.setPosition(lineCount * 32);
+//    codeEdit->setTextCursor(cur);
+    selection.format.setBackground(lineColor);
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = textEdit->textCursor();
+    selection.cursor.clearSelection();
+    extraSelections.append(selection);
+//    selection.cursor = codeEdit->textCursor();
+//    selection.cursor.clearSelection();
+//    extraSelections.append(selection);
+    textEdit->setExtraSelections(extraSelections);
 }
 
 void MainWindow::startCPU(){

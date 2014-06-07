@@ -44,6 +44,7 @@ private:
     void loadFile(const QString &fileName);
     bool saveFile(const QString &fileName);
     void setCurrentFile(const QString &fileName);
+    void highlightCurrentLine(int lineCount);
     QString strippedName(const QString &fullFileName);
 
     Highlighter *highlighter;

@@ -26,10 +26,13 @@ private:
     };
     QVector<HighlightingRule> highlightingRules;
 
+    QRegExp commentStartExpression;
+    QRegExp commentEndExpression;
     QTextCharFormat instructionFormat;
     QTextCharFormat regFormat;
     QTextCharFormat labelFormat;
     QTextCharFormat singleLineCommentFormat;
+    QTextCharFormat multiLineCommentFormat;
 };
 
 #endif // HIGHLIGHTER_H
