@@ -9,8 +9,8 @@ Highlighter::Highlighter(QTextDocument *parent)
     instructionFormat.setFontWeight(QFont::Bold);
 
     QStringList instructionPatterns;
-    QString ins[] = {"add", "addi", "j", "jr", "jal", "beq", "bne"};
-    for(int i = 0; i < 7; i++) {
+    QString ins[] = {"add", "addi", "j", "jr", "jal", "beq", "bne", "sw", "lw"};
+    for(int i = 0; i < 9; i++) {
         QString temp = ins[i];
         temp = "\\b" + temp + "\\b";
         instructionPatterns.append(temp);

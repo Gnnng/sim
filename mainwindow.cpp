@@ -326,8 +326,13 @@ void MainWindow::singleStep(){
     #endif
 
     QString mem, m;
-    for(int i = 0; i < 10; i++) {
-        m.sprintf("[%08x]\t%08x\n", i, cpu->memory[i]);
+    for(int i = 0; i < 12; i++) {
+        int x = 0;
+        x = cpu->memory[i * 4 + 0];
+        x = (x << 8) + cpu->memory[i * 4 + 1];
+        x = (x << 8) + cpu->memory[i * 4 + 2];
+        x = (x << 8) + cpu->memory[i * 4 + 3];
+        m.sprintf("[%08x]\t%08x\n", i, x);
         mem.append(m);
 //        mem = mem + "0x" + QString::number(i, 16) + "\t" + QString::number(cpu->memory[i], 16) + "\n";
     }

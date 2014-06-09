@@ -29,4 +29,8 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-OTHER_FILES +=
+
+OTHER_FILES += \
+    appIcon.rc
+
+RC_FILE = appIcon.rc
