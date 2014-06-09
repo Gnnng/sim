@@ -109,6 +109,16 @@ j 1</string>
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="source">
+           <attribute name="title">
+            <string>source</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QPlainTextEdit" name="plainTextEditSource"/>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
         <item>
