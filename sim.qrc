@@ -11,5 +11,6 @@
         <file>images/build.png</file>
         <file>ins.txt</file>
         <file>images/myappico.ico</file>
+        <file>images/reverse.png</file>
     </qresource>
 </RCC>

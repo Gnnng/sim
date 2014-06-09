@@ -8,17 +8,20 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    // read instructions
-//    init("e:\\Qtworkspace\\sim\\ins.txt", insset);
-
     ui->setupUi(this);
-    textEdit = ui->plainTextEditMips;
-    codeEdit = ui->plainTextEditMachine;
-    infoEdit = ui->plainTextEditDebug;
-    cpuEdit = ui->plainTextEditStatus;
-    memEdit = ui->plainTextEditMemory;
+    ui->splitter1->setStretchFactor(0, 1);
+    ui->splitter1->setStretchFactor(1, 3);
+    ui->splitter2->setStretchFactor(1, 1);
+    ui->splitter2->setStretchFactor(0, 2);
 
-    multiins multi;
+    textEdit = ui->textEditMips;
+    sourceEdit = ui->textEditSource;
+    codeEdit = ui->textEditCode;
+    infoEdit = ui->textEditDebug;
+    cpuEdit = ui->textEditStatus;
+    memEdit = ui->textEditMemory;
+    conEdit = ui->textEditConsole;
+
     connect(textEdit->document(), SIGNAL(contentsChanged()),
             this, SLOT(documentWasModified()));
     connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newFile()));
@@ -30,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAssemble, SIGNAL(triggered()), this, SLOT(assemble()));
     connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(singleStep()));
     connect(ui->actionStop, SIGNAL(triggered()), this, SLOT(stopCPU()));
+    connect(ui->actionDisassemble, SIGNAL(triggered()), this, SLOT(disassemble()));
     setCurrentFile("");
     setUnifiedTitleAndToolBarOnMac(true);
 
@@ -68,11 +72,8 @@ void MainWindow::open()
             loadFile(fileName);
     }
 }
-//! [8]
 
-//! [9]
 bool MainWindow::save()
-//! [9] //! [10]
 {
     if (curFile.isEmpty()) {
         return saveAs();
@@ -80,44 +81,32 @@ bool MainWindow::save()
         return saveFile(curFile);
     }
 }
-//! [10]
 
-//! [11]
 bool MainWindow::saveAs()
-//! [11] //! [12]
 {
     QFileDialog dialog(this);
     dialog.setWindowModality(Qt::WindowModal);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
-    dialog.exec();
+    int ret = dialog.exec();
     QStringList files = dialog.selectedFiles();
 
-    if (files.isEmpty())
+    if (ret == QDialog::Rejected)
         return false;
     return saveFile(files.at(0));
-
 }
-//! [12]
 
-//! [13]
 void MainWindow::about()
-//! [13] //! [14]
 {
    QMessageBox::about(this, tr("MIPS Simulator"),
-            tr("The <b>MIPS Simulator</b> is authored by FOUR UNCLES GRP."));
+            tr("The <b>MIPS Simulator</b> is authored by\nFOUR UNCLES GRP."));
 }
-//! [14]
 
-//! [15]
 void MainWindow::documentWasModified()
-//! [15] //! [16]
 {
     setWindowModified(textEdit->document()->isModified());
 }
 
-//! [40]
 bool MainWindow::maybeSave()
-//! [40] //! [41]
 {
     if (textEdit->document()->isModified()) {
         QMessageBox::StandardButton ret;
@@ -132,11 +121,8 @@ bool MainWindow::maybeSave()
     }
     return true;
 }
-//! [41]
 
-//! [42]
 void MainWindow::loadFile(const QString &fileName)
-//! [42] //! [43]
 {
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -157,13 +143,11 @@ void MainWindow::loadFile(const QString &fileName)
 #endif
 
     setCurrentFile(fileName);
-//    statusBar()->showMessage(tr("File loaded"), 2000);
+    statusBar()->showMessage(tr("File loaded"), 2000);
 }
-//! [43]
 
-//! [44]
 bool MainWindow::saveFile(const QString &fileName)
-//! [44] //! [45]
+
 {
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
@@ -184,17 +168,13 @@ bool MainWindow::saveFile(const QString &fileName)
 #endif
 
     setCurrentFile(fileName);
-//    statusBar()->showMessage(tr("File saved"), 2000);
+    statusBar()->showMessage(tr("File saved"), 2000);
     return true;
 }
-//! [45]
 
-//! [46]
 void MainWindow::setCurrentFile(const QString &fileName)
-//! [46] //! [47]
 {
     curFile = fileName;
-//    std::cout << curFile << std::endl;
     qDebug() << curFile;
     textEdit->document()->setModified(false);
     setWindowModified(false);
@@ -204,11 +184,8 @@ void MainWindow::setCurrentFile(const QString &fileName)
         shownName = "untitled.txt";
     setWindowFilePath(shownName);
 }
-//! [47]
 
-//! [48]
 QString MainWindow::strippedName(const QString &fullFileName)
-//! [48] //! [49]
 {
     return QFileInfo(fullFileName).fileName();
 }
@@ -231,7 +208,6 @@ void MainWindow::assemble(){
     QString mips = textEdit->toPlainText();
     QStringList mipsLines;
     QString mipsLine;
-    int lineNumber = 0;
     QString codesOut;
     QString errorOut;
     mipsLines = mips.split("\n");
@@ -254,51 +230,31 @@ void MainWindow::assemble(){
     }
 
     for(int i = 0; i < errors.size(); i++) {
-        errorOut = errorOut + "Line:" + QString::number(i) + " " + errors[i].c_str() + '\n';
+        errorOut = errorOut + errors[i].c_str() + '\n';
     }
 
-
-//    foreach(mipsLine, mipsLines) {
-//        string codeStr;
-//        string error;
-//        int code;
-
-//        lineNumber++;
-//        qDebug() << "declare finished";
-
-//        if (single(insset, mipsLine.toStdString(), error, codeStr, code) == 0) {
-//            codesOut = codesOut + codeStr.c_str() + '\n';
-//            machineCode.push_back(*((unsigned int *)&code));
-//            machineCode.push_back(code);
-//        } else {
-//            codesOut = codesOut + codeStr.c_str() + '\n';
-//            errorOut = errorOut + "Line:" + QString::number(lineNumber) + " " + error.c_str() + '\n';
-//        }
-
-//    }
     qDebug() << codesOut;
     qDebug() << errorOut;
-#ifndef QT_NO_CURSOR
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-#endif
-    codeEdit->setPlainText(codesOut);
-    infoEdit->setPlainText(errorOut);
-#ifndef QT_NO_CURSOR
-    QApplication::restoreOverrideCursor();
-#endif
-
-//#ifndef QT_NO_CURSOR
-//    QApplication::setOverrideCursor(Qt::WaitCursor);
-//#endif
-
-//#ifndef QT_NO_CURSOR
-//    QApplication::restoreOverrideCursor();
-//#endif
-
+    printToEdit(codeEdit, codesOut);
+    printToEdit(infoEdit, errorOut);
 }
 
 void MainWindow::disassemble(){
-
+//    if (cpuRunning) {
+//        stopCPU();
+//    }
+//    QString code = codeEdit->toPlainText();
+//    QStringList codeLines;
+//    QString codeLine;
+//    int lineNumber = 0;
+//    QString mipsOut;
+//    QString errorOut;
+//    codeLines = code.split("\n");
+//    foreach(codeLine, codeLines) {
+//        int temp = convert(codeLine.toStdString());
+//        mipsOut = mipsOut + singleRemips::translate(*((unsigned int *) &temp)) + "\n";
+//    }
+//    printToEdit(sourceEdit, mipsOut);
 }
 
 void MainWindow::singleStep(){
@@ -317,13 +273,7 @@ void MainWindow::singleStep(){
         info.append(regs);
 //        info = info + "reg[" + QString::number(i) + "]\t" + QString::number(cpu->reg[i], 16) + "\n";
     }
-    #ifndef QT_NO_CURSOR
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-    #endif
-    cpuEdit->setPlainText(info);
-    #ifndef QT_NO_CURSOR
-        QApplication::restoreOverrideCursor();
-    #endif
+    printToEdit(cpuEdit, info);
 
     QString mem, m;
     for(int i = 0; i < 12; i++) {
@@ -336,13 +286,7 @@ void MainWindow::singleStep(){
         mem.append(m);
 //        mem = mem + "0x" + QString::number(i, 16) + "\t" + QString::number(cpu->memory[i], 16) + "\n";
     }
-    #ifndef QT_NO_CURSOR
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-    #endif
-    memEdit->setPlainText(mem);
-    #ifndef QT_NO_CURSOR
-        QApplication::restoreOverrideCursor();
-    #endif
+    printToEdit(memEdit, mem);
     if ((cpu->PC)/4 >= cpu->IR.size()) {
         stopCPU();
     }
@@ -398,5 +342,16 @@ void MainWindow::stopCPU(){
     #endif
 
     cpuRunning = false;
-    delete cpu;
+    if (cpu)
+        delete cpu;
+}
+
+void MainWindow::printToEdit(QPlainTextEdit *edit, QString &text){
+#ifndef QT_NO_CURSOR
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+#endif
+    edit->setPlainText(text);
+#ifndef QT_NO_CURSOR
+    QApplication::restoreOverrideCursor();
+#endif
 }

@@ -32,111 +32,307 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPlainTextEdit" name="plainTextEditStatus">
+     <widget class="QSplitter" name="splitter1">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QGroupBox" name="groupBoxStatus">
+       <property name="minimumSize">
+        <size>
+         <width>225</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>CPU状态</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPlainTextEdit" name="textEditStatus">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
+          </property>
+          <property name="plainText">
+           <string>PC		00000008</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QSplitter" name="splitter2">
+       <property name="minimumSize">
+        <size>
+         <width>400</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <widget class="QGroupBox" name="groupBoxWork">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>工作区</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QTabWidget" name="tabWidgetWork">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="tabShape">
+            <enum>QTabWidget::Rounded</enum>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabsClosable">
+            <bool>false</bool>
+           </property>
+           <property name="movable">
+            <bool>false</bool>
+           </property>
+           <widget class="QWidget" name="tabMips">
+            <attribute name="title">
+             <string>文件</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <property name="leftMargin">
+              <number>9</number>
+             </property>
+             <property name="topMargin">
+              <number>9</number>
+             </property>
+             <property name="rightMargin">
+              <number>9</number>
+             </property>
+             <property name="bottomMargin">
+              <number>9</number>
+             </property>
+             <item>
+              <widget class="QPlainTextEdit" name="textEditMips">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+               <property name="lineWidth">
+                <number>1</number>
+               </property>
+               <property name="tabChangesFocus">
+                <bool>false</bool>
+               </property>
+               <property name="plainText">
+                <string>addi $t0, $zero, 0
+addi $t0, $t0, 1
+add $t1, $t2, $t3
+add $t1, $t2, $t3
+j 1</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabSource">
+            <attribute name="title">
+             <string>源代码</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_12">
+             <item>
+              <widget class="QPlainTextEdit" name="textEditSource"/>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabCode">
+            <attribute name="title">
+             <string>机器码</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_13">
+             <item>
+              <widget class="QPlainTextEdit" name="textEditCode">
+               <property name="plainText">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabMemory">
+            <attribute name="title">
+             <string>内存</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_14">
+             <item>
+              <widget class="QPlainTextEdit" name="textEditMemory"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBoxInfo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>0</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>250</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetMinimumSize</enum>
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
-        <item>
-         <widget class="QTabWidget" name="tabWidget">
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <property name="tabsClosable">
-           <bool>false</bool>
-          </property>
-          <property name="movable">
-           <bool>false</bool>
-          </property>
-          <widget class="QWidget" name="mips">
-           <attribute name="title">
-            <string>mips</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <widget class="QPlainTextEdit" name="plainTextEditMips">
-              <property name="plainText">
-               <string>addi $t0, $zero, 0
-addi $t0, $t0, 1
-add $t1, $t2, $t3
-add $t1, $t2, $t3
-j 1</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+        <property name="title">
+         <string>信息</string>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_7" stretch="0">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QTabWidget" name="tabWidgetInfo">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="tabDebug">
+            <attribute name="title">
+             <string>调试信息</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="QPlainTextEdit" name="textEditDebug">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabConsole">
+            <attribute name="title">
+             <string>控制台输出</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <widget class="QPlainTextEdit" name="textEditConsole"/>
+             </item>
+            </layout>
+           </widget>
           </widget>
-          <widget class="QWidget" name="machine">
-           <attribute name="title">
-            <string>machine</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <widget class="QPlainTextEdit" name="plainTextEditMachine">
-              <property name="plainText">
-               <string>hlhhjkhjkhlhjhl</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="memory">
-           <attribute name="title">
-            <string>memory</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <item>
-             <widget class="QPlainTextEdit" name="plainTextEditMemory"/>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="source">
-           <attribute name="title">
-            <string>source</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <item>
-             <widget class="QPlainTextEdit" name="plainTextEditSource"/>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPlainTextEdit" name="plainTextEditDebug">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="readOnly">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -206,6 +402,7 @@ j 1</string>
    <addaction name="actionOpen"/>
    <addaction name="separator"/>
    <addaction name="actionAssemble"/>
+   <addaction name="actionDisassemble"/>
    <addaction name="separator"/>
    <addaction name="actionRun"/>
    <addaction name="actionStop"/>
@@ -217,6 +414,9 @@ j 1</string>
    </property>
    <property name="text">
     <string>单步运行</string>
+   </property>
+   <property name="statusTip">
+    <string>执行一条机器指令并暂停</string>
    </property>
    <property name="shortcut">
     <string>F7</string>
@@ -230,6 +430,9 @@ j 1</string>
    <property name="text">
     <string>打开</string>
    </property>
+   <property name="statusTip">
+    <string>打开一个文件</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
@@ -237,6 +440,9 @@ j 1</string>
   <action name="actionAbout">
    <property name="text">
     <string>关于</string>
+   </property>
+   <property name="statusTip">
+    <string>关于 MIPS Simulator</string>
    </property>
   </action>
   <action name="actionNew">
@@ -246,6 +452,9 @@ j 1</string>
    </property>
    <property name="text">
     <string>新建</string>
+   </property>
+   <property name="statusTip">
+    <string>新建一个文件</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -259,6 +468,9 @@ j 1</string>
    <property name="text">
     <string>保存</string>
    </property>
+   <property name="statusTip">
+    <string>保存一个文件</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -267,10 +479,16 @@ j 1</string>
    <property name="text">
     <string>另存为</string>
    </property>
+   <property name="statusTip">
+    <string>将文件另存为</string>
+   </property>
   </action>
   <action name="actionExit">
    <property name="text">
     <string>退出</string>
+   </property>
+   <property name="statusTip">
+    <string>退出程序</string>
    </property>
    <property name="shortcut">
     <string>Alt+Q</string>
@@ -280,6 +498,9 @@ j 1</string>
    <property name="text">
     <string>运行到光标</string>
    </property>
+   <property name="statusTip">
+    <string>运行到光标处</string>
+   </property>
   </action>
   <action name="actionStop">
    <property name="icon">
@@ -288,6 +509,9 @@ j 1</string>
    </property>
    <property name="text">
     <string>停止</string>
+   </property>
+   <property name="statusTip">
+    <string>停止虚拟机</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F5</string>
@@ -301,13 +525,23 @@ j 1</string>
    <property name="text">
     <string>汇编</string>
    </property>
+   <property name="statusTip">
+    <string>将源代码翻译成机器码</string>
+   </property>
    <property name="shortcut">
     <string>F5</string>
    </property>
   </action>
   <action name="actionDisassemble">
+   <property name="icon">
+    <iconset resource="sim.qrc">
+     <normaloff>:/images/reverse.png</normaloff>:/images/reverse.png</iconset>
+   </property>
    <property name="text">
     <string>反汇编</string>
+   </property>
+   <property name="statusTip">
+    <string>将机器码翻译成源代码</string>
    </property>
   </action>
  </widget>

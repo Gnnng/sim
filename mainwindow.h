@@ -6,7 +6,7 @@
 #include "cpu.h"
 #include <vector>
 #include "highlighter.h"
-
+//#include "single_remips.h"
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
 class QTextBrowser;
@@ -45,15 +45,17 @@ private:
     bool saveFile(const QString &fileName);
     void setCurrentFile(const QString &fileName);
     void highlightCurrentLine(int lineCount);
+    void printToEdit(QPlainTextEdit *edit, QString &text);
     QString strippedName(const QString &fullFileName);
 
     Highlighter *highlighter;
     QPlainTextEdit *textEdit;
+    QPlainTextEdit *sourceEdit;
     QPlainTextEdit *codeEdit;
     QPlainTextEdit *infoEdit;
     QPlainTextEdit *cpuEdit;
     QPlainTextEdit *memEdit;
-
+    QPlainTextEdit *conEdit;
     QString curFile;
     QStringList mipsLines, codeLines;
     std::vector<int> machineCode;
