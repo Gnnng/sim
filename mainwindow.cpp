@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(open()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(save()));
     connect(ui->actionSaveAs, SIGNAL(triggered()), this, SLOT(saveAs()));
+    connect(ui->actionSaveSource, SIGNAL(triggered()), this, SLOT(saveSource()));
+    connect(ui->actionSaveCode, SIGNAL(triggered()), this, SLOT(saveCode()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionAssemble, SIGNAL(triggered()), this, SLOT(assemble()));
@@ -37,8 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setCurrentFile("");
     setUnifiedTitleAndToolBarOnMac(true);
 
-    highlighter = new Highlighter(textEdit->document());
-
+    textHighlighter = new Highlighter(textEdit->document());
+    sourceHighlighter = new Highlighter(sourceEdit->document());
     cpuRunning = false;
 }
 
@@ -67,7 +69,7 @@ void MainWindow::newFile()
 void MainWindow::open()
 {
     if (maybeSave()) {
-        QString fileName = QFileDialog::getOpenFileName(this);
+        QString fileName = QFileDialog::getOpenFileName(this, "Open file", "", "Source code (*.s);;Any file (*)");
         if (!fileName.isEmpty())
             loadFile(fileName);
     }
@@ -78,21 +80,60 @@ bool MainWindow::save()
     if (curFile.isEmpty()) {
         return saveAs();
     } else {
-        return saveFile(curFile);
+        return saveFile(textEdit, curFile);
     }
 }
 
 bool MainWindow::saveAs()
 {
     QFileDialog dialog(this);
+    const QString suffix(".s");
     dialog.setWindowModality(Qt::WindowModal);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
+    QStringList filters;
+    filters << "Source code(*.s)";
+    dialog.setNameFilters(filters);
+    dialog.setDefaultSuffix(suffix);
     int ret = dialog.exec();
     QStringList files = dialog.selectedFiles();
 
-    if (ret == QDialog::Rejected)
-        return false;
-    return saveFile(files.at(0));
+    if (ret == QDialog::Accepted)
+        return saveFile(textEdit, files.at(0));
+    return false;
+}
+
+bool MainWindow::saveSource() {
+    QFileDialog dialog(this);
+    const QString suffix(".s");
+    dialog.setWindowModality(Qt::WindowModal);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    QStringList filters;
+    filters << "Source code(*.s)";
+    dialog.setNameFilters(filters);
+    dialog.setDefaultSuffix(suffix);
+    int ret = dialog.exec();
+    QStringList files = dialog.selectedFiles();
+
+    if (ret == QDialog::Accepted)
+        return saveFile(sourceEdit, files.at(0));
+    return false;
+}
+
+bool MainWindow::saveCode() {
+    QFileDialog dialog(this);
+    const QString suffix(".o");
+    dialog.setWindowModality(Qt::WindowModal);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    QStringList filters;
+    filters << "Source code(*.o)";
+    dialog.setNameFilters(filters);
+    dialog.setDefaultSuffix(suffix);
+    int ret = dialog.exec();
+    QStringList files = dialog.selectedFiles();
+
+    if (ret == QDialog::Accepted)
+        return saveFile(codeEdit, files.at(0));
+    return false;
 }
 
 void MainWindow::about()
@@ -146,7 +187,7 @@ void MainWindow::loadFile(const QString &fileName)
     statusBar()->showMessage(tr("File loaded"), 2000);
 }
 
-bool MainWindow::saveFile(const QString &fileName)
+bool MainWindow::saveFile(QPlainTextEdit *edit, const QString &fileName)
 
 {
     QFile file(fileName);
@@ -162,7 +203,7 @@ bool MainWindow::saveFile(const QString &fileName)
 #ifndef QT_NO_CURSOR
     QApplication::setOverrideCursor(Qt::WaitCursor);
 #endif
-    out << textEdit->toPlainText();
+    out << edit->toPlainText();
 #ifndef QT_NO_CURSOR
     QApplication::restoreOverrideCursor();
 #endif
@@ -262,7 +303,8 @@ void MainWindow::singleStep(){
         startCPU();
         cpuRunning = true;
     }
-    highlightCurrentLine(cpu->PC/4 + 1);
+    highlightCurrentLine(textEdit, cpu->PC/4 + 1);
+    highlightCurrentLine(codeEdit, cpu->PC/4 + 1);
     cpu->run(1);
     QString info, pc, regs;
     pc.sprintf("PC\t\t%08x\n", cpu->PC);
@@ -271,33 +313,60 @@ void MainWindow::singleStep(){
     for(int i = 0; i < 32; i++) {
         regs.sprintf("$%s\treg[%2d]\t%08x\n", regname[i].c_str(), i, cpu->reg[i]);
         info.append(regs);
-//        info = info + "reg[" + QString::number(i) + "]\t" + QString::number(cpu->reg[i], 16) + "\n";
     }
     printToEdit(cpuEdit, info);
 
     QString mem, m;
-    for(int i = 0; i < 12; i++) {
+    for(int i = 0; i < 128; i++) {
         int x = 0;
         x = cpu->memory[i * 4 + 0];
         x = (x << 8) + cpu->memory[i * 4 + 1];
         x = (x << 8) + cpu->memory[i * 4 + 2];
         x = (x << 8) + cpu->memory[i * 4 + 3];
-        m.sprintf("[%08x]\t%08x\n", i, x);
+        m.sprintf("[%08x]\t%08x\n", i << 2, x);
         mem.append(m);
-//        mem = mem + "0x" + QString::number(i, 16) + "\t" + QString::number(cpu->memory[i], 16) + "\n";
     }
     printToEdit(memEdit, mem);
+
     if ((cpu->PC)/4 >= cpu->IR.size()) {
         stopCPU();
     }
+}
+
+void MainWindow::highlightCurrentLine(QPlainTextEdit *edit, int lineCount) {
+    QList<QTextEdit::ExtraSelection> extraSelections;
+    QTextEdit::ExtraSelection selection;
+    QColor lineColor = QColor(Qt::green).lighter(160);
+    if (lineCount == 0) { // lincCount == 0, then clear selection
+        edit->setExtraSelections(extraSelections);
+        return;
+    }
+    // lineCount != 0, then highlight below
+    QString content = edit->toPlainText();
+    int pos = content.size();
+    for(int i = 0; i < content.size(); i++) {
+        if (content[i] == '\n')
+            lineCount--;
+        if (lineCount == 0) {
+            pos = i;
+            break;
+        }
+    }
+    QTextCursor cur = edit->textCursor();
+    cur.setPosition(pos);
+    edit->setTextCursor(cur);
+    selection.format.setBackground(lineColor);
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = edit->textCursor();
+    selection.cursor.clearSelection();
+    extraSelections.append(selection);
+    edit->setExtraSelections(extraSelections);
 }
 
 void MainWindow::highlightCurrentLine(int lineCount) {
     QList<QTextEdit::ExtraSelection> extraSelections;
     QTextEdit::ExtraSelection selection;
     QColor lineColor = QColor(Qt::green).lighter(160);
-
-    qDebug() << textEdit->textCursor().position();
     QString content = textEdit->toPlainText();
     int pos = content.size();
     for(int i = 0; i < content.size(); i++) {
@@ -311,36 +380,24 @@ void MainWindow::highlightCurrentLine(int lineCount) {
     QTextCursor cur = textEdit->textCursor();
     cur.setPosition(pos);
     textEdit->setTextCursor(cur);
-
-//    cur = codeEdit->textCursor();
-//    cur.setPosition(lineCount * 32);
-//    codeEdit->setTextCursor(cur);
     selection.format.setBackground(lineColor);
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
     selection.cursor = textEdit->textCursor();
     selection.cursor.clearSelection();
     extraSelections.append(selection);
-//    selection.cursor = codeEdit->textCursor();
-//    selection.cursor.clearSelection();
-//    extraSelections.append(selection);
     textEdit->setExtraSelections(extraSelections);
 }
 
 void MainWindow::startCPU(){
     cpu = new CPU();
     cpu->init(machineCode);
-    qDebug() << "PC width is" << sizeof(cpu->PC);
 }
 
 void MainWindow::stopCPU(){
-    #ifndef QT_NO_CURSOR
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-    #endif
-    cpuEdit->setPlainText("");
-    #ifndef QT_NO_CURSOR
-        QApplication::restoreOverrideCursor();
-    #endif
-
+    printToEdit(cpuEdit, QString(""));
+    printToEdit(conEdit, QString(""));
+    highlightCurrentLine(textEdit, 0);
+    highlightCurrentLine(codeEdit, 0);
     cpuRunning = false;
     if (cpu)
         delete cpu;

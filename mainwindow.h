@@ -32,6 +32,8 @@ private slots:
     void open();
     bool save();
     bool saveAs();
+    bool saveSource();
+    bool saveCode();
     void about();
     void documentWasModified();
     void assemble();
@@ -42,13 +44,15 @@ private slots:
 private:
     bool maybeSave();
     void loadFile(const QString &fileName);
-    bool saveFile(const QString &fileName);
+    bool saveFile(QPlainTextEdit *edit, const QString &fileName);
     void setCurrentFile(const QString &fileName);
     void highlightCurrentLine(int lineCount);
+    void highlightCurrentLine(QPlainTextEdit *edit, int lineCount);
     void printToEdit(QPlainTextEdit *edit, QString &text);
     QString strippedName(const QString &fullFileName);
 
-    Highlighter *highlighter;
+    Highlighter *textHighlighter;
+    Highlighter *sourceHighlighter;
     QPlainTextEdit *textEdit;
     QPlainTextEdit *sourceEdit;
     QPlainTextEdit *codeEdit;

@@ -348,10 +348,10 @@ j 1</string>
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>250</x>
       <y>104</y>
       <width>128</width>
-      <height>181</height>
+      <height>225</height>
      </rect>
     </property>
     <property name="title">
@@ -362,6 +362,8 @@ j 1</string>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="actionSaveSource"/>
+    <addaction name="actionSaveCode"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -542,6 +544,16 @@ j 1</string>
    </property>
    <property name="statusTip">
     <string>将机器码翻译成源代码</string>
+   </property>
+  </action>
+  <action name="actionSaveSource">
+   <property name="text">
+    <string>保存源代码</string>
+   </property>
+  </action>
+  <action name="actionSaveCode">
+   <property name="text">
+    <string>保存机器码</string>
    </property>
   </action>
  </widget>
