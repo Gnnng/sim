@@ -54,14 +54,16 @@ const std::string fuctoR[][6]={
     "000100","sllv","3","3","1","n",
     "000110","srlv","3","2","1","n",
     "000111","srav","3","2","1","n",
-    "001000","jr","1","n","n","n",
+    "001000","jr","1","n","n","n"
     "x","x","x","x"
 };
 
-typedef unsigned int dword;//my OS is 64-bit
+
 
 class singleRemips
 {
+typedef unsigned int dword;//my OS is 64-bit
+private:
 public:
     dword num(std::string s);
     std::string check(dword begin,dword tail,int &type,int &openum);
