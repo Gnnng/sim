@@ -13,7 +13,7 @@
 #include <fstream>
 #include <vector>
 #include "exp.h"
-singleins::singleins(std::string filename)
+singleins::singleins(char* filename)
 {
     init(filename);
 }
@@ -63,7 +63,7 @@ std::string singleins::address(std::string reg)
     }
     return "XXX";
 }
-void singleins::init(std::string filename)
+void singleins::init(char* filename)
 {
     std::string ope;
     std::ifstream ifile(filename);

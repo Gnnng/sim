@@ -58,11 +58,11 @@ private:
 
     INSSET insset;
 public:
-    singleins(std::string filename);
+    singleins(char* filename);
     singleins();
     std::string address(int ii,int x);
     std::string address(std::string reg);
-    void init(std::string filename);
+    void init(char* filename);
     void init();
     int single(std::string sins,std::string &reterror,std::string &result,int &ins);
 };
