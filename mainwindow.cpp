@@ -1,8 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QtWidgets>
-#include "multiins.h"
-#include "highlighter.h"
+
 #include <string>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -259,7 +258,7 @@ void MainWindow::assemble(){
     foreach(mipsLine, mipsLines) {
         multi.add(mipsLine.toStdString());
     }
-    multi.handle();
+    vector<string> machineCodeStr = multi.handle();
     vector<string> results, errors;
     results = multi.translate(errors);
 
@@ -318,15 +317,6 @@ void MainWindow::singleStep(){
     printToEdit(cpuEdit, info);
 
     QString mem, m;
-//    for(int i = 0; i < 128; i++) {
-//        int x = 0;
-//        x = cpu->memory[i * 4 + 0];
-//        x = (x << 8) + cpu->memory[i * 4 + 1];
-//        x = (x << 8) + cpu->memory[i * 4 + 2];
-//        x = (x << 8) + cpu->memory[i * 4 + 3];
-//        m.sprintf("[%08x]\t%08x\n", i << 2, x);
-//        mem.append(m);
-//    }
     printToEdit(memEdit, mem);
 
     if ((cpu->PC)/4 >= cpu->IR.size()) {

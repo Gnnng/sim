@@ -129,9 +129,11 @@ void CPU::run(int step, int line){
 	//step = 1 means RUN ONCE
 	//line = X, means Breakpoint at line X;
 	int op, rs, rt, rd, sft, func, adr, dat0, dat1;
-	while((PC >> 2) < IR.size()){
+//	while((PC >> 2) < IR.size()){
+    while(1){
 		//printf("%d\n", PC >> 2);
-		int now = IR[PC >> 2];
+//		int now = IR[PC >> 2];
+        int now = memory.mmu(PC, 0, 0);
 		op = (now >> 26) & 0x3F;		//6
 		rs = (now >> 21) & 0x1F;		//5
 		rt = (now >> 16) & 0x1F;		//5

@@ -13,7 +13,7 @@
 #include <fstream>
 #include <vector>
 #include "exp.h"
-singleins::singleins(char* filename)
+singleins::singleins(std::string filename)
 {
     init(filename);
 }
@@ -63,7 +63,7 @@ std::string singleins::address(std::string reg)
     }
     return "XXX";
 }
-void singleins::init(char* filename)
+void singleins::init(std::string filename)
 {
     std::string ope;
     std::ifstream ifile(filename);
@@ -110,6 +110,12 @@ int singleins::single(std::string sins,std::string &reterror,std::string &result
     ss.clear();
     ss<<s2;
     ss>>ope;
+    if (ope=="syscall")
+    {
+        result="00000000000000000000000000001100";
+        ins=0x0000000C;
+        return 0;
+    }
     if (ope=="")
     {
         return -1;

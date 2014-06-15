@@ -414,9 +414,9 @@ int mmu_class::write_cache(word phy_addr,word wdata,cache_p p,word real_memory[M
 }
 
 
-int main()
-{
-    mmu_class go;
-    printf("%lu\n",*go.disparray(0x1000));
-}
+//int main()
+//{
+//    mmu_class go;
+//    printf("%lu\n",*go.disparray(0x1000));
+//}
 

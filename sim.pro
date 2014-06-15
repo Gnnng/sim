@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     cpu.cpp \
     multiins.cpp \
     highlighter.cpp \
-    mmu.cpp
+    mmu.cpp \
+    single_remips.cpp
 
 HEADERS  += mainwindow.h \
     newmips.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     cpu.h \
     multiins.h \
     highlighter.h \
-    mmu.h
+    mmu.h \
+    single_remips.h
 
 FORMS    += mainwindow.ui
 

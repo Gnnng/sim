@@ -2,11 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <vector>
+
 #include "newmips.h"
 #include "cpu.h"
-#include <vector>
 #include "highlighter.h"
-//#include "single_remips.h"
+#include "multiins.h"
+#include "mmu.h"
+#include "single_remips.h"
+
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
 class QTextBrowser;

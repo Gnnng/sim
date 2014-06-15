@@ -9,7 +9,6 @@
 #include "single_remips.h"
 #include <string>
 #include <sstream>
-
 dword singleRemips::num(std::string s)
 {
     dword ret=0;
