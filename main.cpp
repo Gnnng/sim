@@ -8,6 +8,5 @@ int main(int argc, char *argv[])
     app.setOrganizationName("FourUncles Inc.");
     app.setApplicationName("MIPS Simulator");
     w.show();
-
     return app.exec();
 }

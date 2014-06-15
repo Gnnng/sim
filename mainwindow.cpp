@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    cpu = new CPU();
     ui->setupUi(this);
     ui->splitter1->setStretchFactor(0, 1);
     ui->splitter1->setStretchFactor(1, 3);
@@ -317,15 +318,15 @@ void MainWindow::singleStep(){
     printToEdit(cpuEdit, info);
 
     QString mem, m;
-    for(int i = 0; i < 128; i++) {
-        int x = 0;
-        x = cpu->memory[i * 4 + 0];
-        x = (x << 8) + cpu->memory[i * 4 + 1];
-        x = (x << 8) + cpu->memory[i * 4 + 2];
-        x = (x << 8) + cpu->memory[i * 4 + 3];
-        m.sprintf("[%08x]\t%08x\n", i << 2, x);
-        mem.append(m);
-    }
+//    for(int i = 0; i < 128; i++) {
+//        int x = 0;
+//        x = cpu->memory[i * 4 + 0];
+//        x = (x << 8) + cpu->memory[i * 4 + 1];
+//        x = (x << 8) + cpu->memory[i * 4 + 2];
+//        x = (x << 8) + cpu->memory[i * 4 + 3];
+//        m.sprintf("[%08x]\t%08x\n", i << 2, x);
+//        mem.append(m);
+//    }
     printToEdit(memEdit, mem);
 
     if ((cpu->PC)/4 >= cpu->IR.size()) {
@@ -389,7 +390,7 @@ void MainWindow::highlightCurrentLine(int lineCount) {
 }
 
 void MainWindow::startCPU(){
-    cpu = new CPU();
+//    cpu = new CPU();
     cpu->init(machineCode);
 }
 
@@ -399,8 +400,8 @@ void MainWindow::stopCPU(){
     highlightCurrentLine(textEdit, 0);
     highlightCurrentLine(codeEdit, 0);
     cpuRunning = false;
-    if (cpu)
-        delete cpu;
+//    if (cpu)
+//        delete cpu;
 }
 
 void MainWindow::printToEdit(QPlainTextEdit *edit, QString &text){
