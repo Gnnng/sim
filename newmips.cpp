@@ -110,6 +110,12 @@ int singleins::single(std::string sins,std::string &reterror,std::string &result
     ss.clear();
     ss<<s2;
     ss>>ope;
+    if (ope=="syscall")
+    {
+        result="00000000000000000000000000001100";
+        ins=0x0000000C;
+        return 0;
+    }
     if (ope=="")
     {
         return -1;
