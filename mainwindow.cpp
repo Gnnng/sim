@@ -242,6 +242,8 @@ int convert(string line) {
 }
 
 void MainWindow::assemble(){
+    qDebug() << "here";
+
     if (cpuRunning) {
         stopCPU();
     }
@@ -253,22 +255,23 @@ void MainWindow::assemble(){
     QStringList mipsLines;
     QString mipsLine;
     mipsLines = mips.split("\n");
-    multiins multi;
-    machineCode.clear();
+    multiins *multi;
+    multi = new multiins();
+//    multiins multi();
+
     foreach(mipsLine, mipsLines) {
-        multi.add(mipsLine.toStdString());
+        multi->add(mipsLine.toStdString());
     }
-
+    qDebug() << "1";
     // source, code, error
-    vector<string> sourceLines = multi.handle();
+    vector<string> sourceLines = multi->handle();
     vector<string> codeStr, errors;
-    codeStr = multi.translate(errors);
-
+    codeStr = multi->translate(errors);
+    qDebug() << "2";
     // source out
     for(int i = 0; i < sourceLines.size(); i++) {
         sourceOut = sourceOut + sourceLines[i].c_str() + '\n';
     }
-
     // code out
     for(int i = 0; i < codeStr.size(); i++) {
         codesOut = codesOut + codeStr[i].c_str() + '\n';
@@ -277,12 +280,19 @@ void MainWindow::assemble(){
     for(int i = 0; i < errors.size(); i++) {
         errorOut = errorOut + errors[i].c_str() + '\n';
     }
-
-    qDebug() << codesOut;
-    qDebug() << errorOut;
+//    qDebug() << "3";
+//    qDebug() << codesOut;
+//    qDebug() << errorOut;
+    // print
     printToEdit(sourceEdit, sourceOut);
     printToEdit(codeEdit, codesOut);
     printToEdit(infoEdit, errorOut);
+    // generate machineCode
+    machineCode.clear();
+    for(int i = 0; i < 512*1024; i++) {
+        machineCode.push_back(multi->mem[i].word);
+    }
+    delete multi;
 }
 
 void MainWindow::disassemble(){
@@ -308,7 +318,7 @@ void MainWindow::singleStep(){
         startCPU();
         cpuRunning = true;
     }
-    highlightCurrentLine(textEdit, cpu->PC/4 + 1);
+    highlightCurrentLine(sourceEdit, cpu->PC/4 + 1);
     highlightCurrentLine(codeEdit, cpu->PC/4 + 1);
     cpu->run(1);
     QString info, pc, regs;
@@ -322,6 +332,11 @@ void MainWindow::singleStep(){
     printToEdit(cpuEdit, info);
 
     QString mem, m;
+    for(int i = 0; i < 10; i++) {
+//        m.sprintf("%08x\n", cpu->memory.mmu(i, 0, 0));
+        m.sprintf("[%08x]\t%08x\n", i << 2, );
+        mem.append(m);
+    }
     printToEdit(memEdit, mem);
 
     if ((cpu->PC)/4 >= cpu->IR.size()) {

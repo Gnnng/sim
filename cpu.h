@@ -61,6 +61,7 @@ public:
 public:
 	CPU(){
 		PC = 0;
+        video = "";
 		$zero = 0; 						//$zero
 		$sp = MEMSIZE; 					//$sp
 	}

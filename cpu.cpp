@@ -1,7 +1,6 @@
 #include "mmu.h"
 #include "CPU.h"
 
-
 //WORD mmu(word vir_addr,int write,word wdata)
 
 /*
@@ -30,12 +29,23 @@ void CPU::init(string FileName){
 //*/
 
 //*
+#include <qdebug.h>
 void CPU::init(vector<int> _IR){
 	PC = 0;
 	$zero = 0;							//$zero
 	$sp = MEMSIZE; 						//$sp
 	video = "";
 	IR = _IR;
+//    for(int i = 0; i < 10; i++) {
+//        if (i < 11)
+//            qDebug() << _IR[i];
+//        memory.mmu(i, 1, _IR[i]);
+
+//    }
+//    for(int i = 0; i < 10; i++) {
+//        qDebug() << memory.mmu(i, 0, _IR[i]);
+//    }
+
 //	memory = mmu_class();				//new
 }
 //*/
@@ -132,8 +142,25 @@ void CPU::run(int step, int line){
 //	while((PC >> 2) < IR.size()){
     while(1){
 		//printf("%d\n", PC >> 2);
-//		int now = IR[PC >> 2];
-        int now = memory.mmu(PC, 0, 0);
+        int now = IR[PC >> 2];
+
+//        int pre_now = memory.mmu(PC >> 2, 0, 0);
+//        int l1, l2, l3, l4;
+//        l1 = pre_now & 0xff;
+//        pre_now >>= 8;
+//        l2 = pre_now & 0xff;
+//        pre_now >>= 8;
+//        l3 = pre_now & 0xff;
+//        pre_now >>= 8;
+//        l4 = pre_now & 0xff;
+//        int now = 0;
+//        now |= l1;
+//        now <<= 8;
+//        now |= l2;
+//        now <<= 8;
+//        now |= l3;
+//        now <<= 8;
+//        now |= l4;
 		op = (now >> 26) & 0x3F;		//6
 		rs = (now >> 21) & 0x1F;		//5
 		rt = (now >> 16) & 0x1F;		//5
@@ -157,7 +184,7 @@ void CPU::run(int step, int line){
 		*/
 		
 		if (now == 0) continue;			//nop;
-		switch(op){
+        switch(op){
 			//00 0000 R-type
 			case 0x00: 	
 				switch(func){
@@ -206,6 +233,7 @@ void CPU::run(int step, int line){
 					//00 1000 jr
 					case 0x08:
 						PC = reg[rs]; //##
+//                        assert(0);
 						break;
 					
 					//10 0111 nor
@@ -401,7 +429,7 @@ void CPU::run(int step, int line){
 				
 			//00 0011 jal
 			case 0x03:
-				$ra = PC + 4; 	//$ra
+                $ra = PC; 	//$ra
 				PC = PC & 0xF0000000 | (adr << 2);
 				break;
 			

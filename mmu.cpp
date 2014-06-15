@@ -185,7 +185,7 @@ word mmu_class::mmu(word vir_addr,int write,word wdata)//要有写信号，和�
 
     switch(type)
     {
-        case -1:printf("illegal address error!");
+        case -1:break;printf("illegal address error!");
         case 0:tlb_access=1;break;//kuseg需要tlb处理
         case 1:phy_addr=vir_addr&0x7fffffff;cache_access=1;break;//cached kseg0 固定映射方法 需要cache处理
         case 2:phy_addr=vir_addr&0x1fffffff;break;//uncached kseg1 固定映射方法 没有cache
@@ -215,14 +215,14 @@ word mmu_class::mmu(word vir_addr,int write,word wdata)//要有写信号，和�
         {
             if(write_cache(phy_addr, wdata, nowcache,real_memory))
             {
-                printf("Write Succeed!\n");
+//                printf("Write Succeed!\n");
                 //printf("cache->index0->blocks1=%lu\n",nowcache->lines[0]->blocks[1]->data[0]);
                 //printf("real_memory[0x1000]=%lu\n",real_memory[0x1000]);
                 data=wdata;
             }
             else
             {
-                printf("Write Failed\n");
+//                printf("Write Failed\n");
                 return 0;
             }
 
@@ -293,7 +293,7 @@ offset=vir_addr&0xfff;
             return phy_addr;
         }
     }
-    printf("There is a tlb miss!\n");
+//    printf("There is a tlb miss!\n");
     //update_tlb(vir_addr,tlb,page);
     return page->tables[vpn]->lines[offset]->phy_addr;
 }
@@ -317,7 +317,7 @@ word mmu_class::match_cache(word phy_addr,cache_p p,word real_memory[MAXMEM])//�
             return p->lines[index]->blocks[i]->data[offset];//返回对应数据
         }
     }
-    printf("There is a cache miss!\n");
+//    printf("There is a cache miss!\n");
     update_cache(phy_addr,p,real_memory);
     return real_memory[phy_addr];
 }

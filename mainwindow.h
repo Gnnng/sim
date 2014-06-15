@@ -9,7 +9,7 @@
 #include "highlighter.h"
 #include "multiins.h"
 #include "mmu.h"
-#include "single_remips.h"
+//#include "single_remips.h"
 
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
