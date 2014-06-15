@@ -246,36 +246,41 @@ void MainWindow::assemble(){
         stopCPU();
     }
 
+    QString codesOut, errorOut, sourceOut;
+
+    // text
     QString mips = textEdit->toPlainText();
     QStringList mipsLines;
     QString mipsLine;
-    QString codesOut;
-    QString errorOut;
     mipsLines = mips.split("\n");
-
     multiins multi;
     machineCode.clear();
     foreach(mipsLine, mipsLines) {
         multi.add(mipsLine.toStdString());
     }
-    vector<string> machineCodeStr = multi.handle();
-    vector<string> results, errors;
-    results = multi.translate(errors);
 
-    for(int i = 0; i < results.size(); i++) {
-        codesOut = codesOut + results[i].c_str() + '\n';
-        if (results[i].size() == 0)
-            continue;
-        machineCode.push_back(convert(results[i]));
-        qDebug() << convert(results[i]);
+    // source, code, error
+    vector<string> sourceLines = multi.handle();
+    vector<string> codeStr, errors;
+    codeStr = multi.translate(errors);
+
+    // source out
+    for(int i = 0; i < sourceLines.size(); i++) {
+        sourceOut = sourceOut + sourceLines[i].c_str() + '\n';
     }
 
+    // code out
+    for(int i = 0; i < codeStr.size(); i++) {
+        codesOut = codesOut + codeStr[i].c_str() + '\n';
+    }
+    // error out
     for(int i = 0; i < errors.size(); i++) {
         errorOut = errorOut + errors[i].c_str() + '\n';
     }
 
     qDebug() << codesOut;
     qDebug() << errorOut;
+    printToEdit(sourceEdit, sourceOut);
     printToEdit(codeEdit, codesOut);
     printToEdit(infoEdit, errorOut);
 }
