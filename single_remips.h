@@ -58,10 +58,11 @@ const std::string fuctoR[][6]={
     "x","x","x","x"
 };
 
-typedef unsigned int dword;//my OS is 64-bit
+
 
 class singleRemips
 {
+typedef unsigned int dword;//my OS is 64-bit
 private:
 public:
     dword num(std::string s);
