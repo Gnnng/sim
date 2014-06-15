@@ -9,9 +9,9 @@
 #include "single_remips.h"
 #include <string>
 #include <sstream>
-dword singleRemips::num(std::string s)
+remips_dword singleRemips::num(std::string s)
 {
-    dword ret=0;
+    remips_dword ret=0;
     for (int i=0;i<s.length();i++)
     {
         if (s[i]=='1')
@@ -23,7 +23,7 @@ dword singleRemips::num(std::string s)
     return ret;
 }
 
-std::string singleRemips::check(dword begin,dword tail,int &type,int &openum)
+std::string singleRemips::check(remips_dword begin,remips_dword tail,int &type,int &openum)
 {
     std::string ret;
     if (begin==num("000000"))
@@ -59,18 +59,18 @@ std::string singleRemips::check(dword begin,dword tail,int &type,int &openum)
     
     return "xxx";
 }
-std::string singleRemips::name(dword s)
+std::string singleRemips::name(remips_dword s)
 {
     return "$"+remips_regname[s];
 }
 
-std::string singleRemips::translate(dword sin)
+std::string singleRemips::translate(remips_dword sin)
 {
     using namespace std;
     string ins;
     stringstream res;
     string sins;
-    dword sig,tail;
+    remips_dword sig,tail;
     string anssig,ans;
     int type;
     int openum;
