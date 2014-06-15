@@ -4,12 +4,13 @@
 #include <QMainWindow>
 #include <vector>
 
+#include "single_remips.h"
 #include "newmips.h"
 #include "cpu.h"
 #include "highlighter.h"
 #include "multiins.h"
 #include "mmu.h"
-//#include "single_remips.h"
+
 
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
@@ -26,6 +27,7 @@ class MainWindow : public QMainWindow
 
 
 public:
+    static const int maxPrintMem = (1 << 16);
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 protected:

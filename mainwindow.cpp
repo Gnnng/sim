@@ -262,6 +262,7 @@ void MainWindow::assemble(){
     foreach(mipsLine, mipsLines) {
         multi->add(mipsLine.toStdString());
     }
+    multi->add("j 0");
     qDebug() << "1";
     // source, code, error
     vector<string> sourceLines = multi->handle();
@@ -269,8 +270,14 @@ void MainWindow::assemble(){
     codeStr = multi->translate(errors);
     qDebug() << "2";
     // source out
+    bool flag = false;
     for(int i = 0; i < sourceLines.size(); i++) {
-        sourceOut = sourceOut + sourceLines[i].c_str() + '\n';
+        if (sourceLines[i].find(".data") == string::npos)
+            flag = true;
+        if (sourceLines[i].find(".text") == string::npos)
+            flag = false;
+        if (!flag)
+            sourceOut = sourceOut + sourceLines[i].c_str() + '\n';
     }
     // code out
     for(int i = 0; i < codeStr.size(); i++) {
@@ -323,6 +330,7 @@ void MainWindow::singleStep(){
     cpu->run(1);
     QString info, pc, regs;
     pc.sprintf("PC\t\t%08x\n", cpu->PC);
+    qDebug() << "running PC" << cpu->PC;
     info.append(pc);
     std::string regname[32]={"zero","at","v0","v1","a0","a1","a2","a3","t0","t1","t2","t3","t4","t5","t6","t7","s0","s1","s2","s3","s4","s5","s6","s7","t8","t9","k0","k1","gp","sp","fp","ra"};
     for(int i = 0; i < 32; i++) {
@@ -332,16 +340,19 @@ void MainWindow::singleStep(){
     printToEdit(cpuEdit, info);
 
     QString mem, m;
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < maxPrintMem; i+=4) {
 //        m.sprintf("%08x\n", cpu->memory.mmu(i, 0, 0));
-        m.sprintf("[%08x]\t%08x\n", i << 2, );
+        m.sprintf("[%08x]\t%08x\t%08x\t%08x\t%08x\n", i << 2, cpu->memory[i], cpu->memory[i+1], cpu->memory[i+2], cpu->memory[i+3]);
         mem.append(m);
     }
     printToEdit(memEdit, mem);
 
-    if ((cpu->PC)/4 >= cpu->IR.size()) {
-        stopCPU();
-    }
+    QString consoleOut;
+    consoleOut.append(cpu->video.c_str());
+    printToEdit(conEdit, consoleOut);
+//    if ((cpu->PC)/4 >= cpu->IR.size) {
+//        stopCPU();
+//    }
 }
 
 void MainWindow::highlightCurrentLine(QPlainTextEdit *edit, int lineCount) {
@@ -405,9 +416,11 @@ void MainWindow::startCPU(){
 }
 
 void MainWindow::stopCPU(){
-    printToEdit(cpuEdit, QString(""));
-    printToEdit(conEdit, QString(""));
-    highlightCurrentLine(textEdit, 0);
+    QString empty("");
+    printToEdit(cpuEdit, empty);
+    printToEdit(conEdit, empty);
+    printToEdit(memEdit, empty);
+    highlightCurrentLine(sourceEdit, 0);
     highlightCurrentLine(codeEdit, 0);
     cpuRunning = false;
 //    if (cpu)

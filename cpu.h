@@ -1,7 +1,7 @@
 /*
-	Single Clock CPU
-	Big-Endian 
-	32bits
+    Single Clock CPU
+    Big-Endian
+    32bits
 */
 #include <cstdio>
 #include <string>
@@ -10,7 +10,6 @@
 #include <cassert>
 #include <iostream>
 #include <sstream>
-#include "mmu.h"
 
 using namespace std;
 
@@ -49,33 +48,34 @@ using namespace std;
 
 class CPU{
 public:
-	//MMU
-	static const int MEMSIZE = (1 << 21) - 1; //memory 2MB Byte
-	string video;
-	int PC;
-	int reg[32]; 							//register 
-	//int memory[MEMSIZE];					//memory 65536 Byte = 64 KB
-    mmu_class memory;
-	vector<int> IR;							//32bits InstructionMemory
-	
+    //MMU
+    static const int MEMSIZE = (1 << 21) - 1; //memory 2MB Byte
+//    static const int MEMSIZE = 65536; //memory 2MB Byte
+    string video;
+    int PC;
+    int reg[32]; 							//register
+    int memory[MEMSIZE];					//memory 65536 Byte = 64 KB
+    //mmu_class memory;						///
+    vector<int> IR;							//32bits InstructionMemory
+
 public:
-	CPU(){
-		PC = 0;
+    CPU(){
+        PC = 0;
+        $zero = 0; 						//$zero
+        $sp = MEMSIZE; 					//$sp
         video = "";
-		$zero = 0; 						//$zero
-		$sp = MEMSIZE; 					//$sp
-	}
-	//mmu(word vir_addr,int write,word wdata)
-	int LW(int addr);
-	void SW(int addr, int data);
-	int LB(int addr);
-	void SB(int addr, int data);
-	//Syscall
-	void print_char(int addr);
-	void print_int(int addr);
-	void print_string(int addr);
-	void init(vector<int> _IR);
-	//void init(string FileName);
-	void run(int step = 0, int line = 0);
-	~CPU(){}
+    }
+    //mmu(word vir_addr,int write,word wdata)
+    int LW(int addr);
+    void SW(int addr, int data);
+    int LB(int addr);
+    void SB(int addr, int data);
+    //Syscall
+    void print_char(int addr);
+    void print_int(int addr);
+    void print_string(int addr);
+    void init(vector<int> _IR);
+    //void init(string FileName);
+    void run(int step = 0, int line = 0);
+    ~CPU(){}
 };

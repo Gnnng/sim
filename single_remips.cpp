@@ -7,8 +7,7 @@
 //
 
 #include "single_remips.h"
-#include <string>
-#include <sstream>
+
 remips_dword singleRemips::num(std::string s)
 {
     remips_dword ret=0;
@@ -56,7 +55,7 @@ std::string singleRemips::check(remips_dword begin,remips_dword tail,int &type,i
             return opetoJ[i][1];
         }
     }
-    
+
     return "xxx";
 }
 std::string singleRemips::name(remips_dword s)
@@ -139,7 +138,7 @@ std::string singleRemips::translate(remips_dword sin)
         exp=sin & 0x03FFFFFF;
         res<<anssig+" "<<exp<<endl;
     }
-    
+
     return res.str();
 }
 
