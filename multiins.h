@@ -20,9 +20,10 @@ class multiins{
 private:
     std::vector <std::string> instructions;
     std::vector <tip> tipset;
+    std::vector<std::string> _reterror;
 public:
     void add(std::string);
-    void handle();
+    std::vector<std::string> handle();
     std::vector<std::string> translate(std::vector<std::string> &reterror);
 };
 #endif /* defined(__mips__multiins__) */
