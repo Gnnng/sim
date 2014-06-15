@@ -13,6 +13,8 @@
 #define R 0
 #define I 1
 #define J 2
+typedef unsigned int remips_dword;//my OS is 64-bit
+
 const std::string remips_regname[32]={"zero","at","v0","v1","a0","a1","a2","a3",
     "t0","t1","t2","t3","t4","t5","t6","t7",
     "s0","s1","s2","s3","s4","s5","s6","s7",
@@ -61,12 +63,11 @@ const std::string fuctoR[][6]={
 
 class singleRemips
 {
-typedef unsigned int dword;//my OS is 64-bit
 private:
 public:
-    dword num(std::string s);
-    std::string check(dword begin,dword tail,int &type,int &openum);
-    std::string name(dword s);
-    std::string translate(dword sin);
+    remips_dword num(std::string s);
+    std::string check(remips_dword begin,remips_dword tail,int &type,int &openum);
+    std::string name(remips_dword s);
+    std::string translate(remips_dword sin);
 };
 #endif /* defined(__remips__single_remips__) */
