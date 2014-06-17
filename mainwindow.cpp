@@ -303,21 +303,26 @@ void MainWindow::assemble(){
 }
 
 void MainWindow::disassemble(){
-//    if (cpuRunning) {
-//        stopCPU();
-//    }
-//    QString code = codeEdit->toPlainText();
-//    QStringList codeLines;
-//    QString codeLine;
-//    int lineNumber = 0;
-//    QString mipsOut;
-//    QString errorOut;
-//    codeLines = code.split("\n");
-//    foreach(codeLine, codeLines) {
-//        int temp = convert(codeLine.toStdString());
-//        mipsOut = mipsOut + singleRemips::translate(*((unsigned int *) &temp)) + "\n";
-//    }
-//    printToEdit(sourceEdit, mipsOut);
+    if (cpuRunning) {
+        stopCPU();
+    }
+    QString code = codeEdit->toPlainText();
+    QStringList codeLines;
+    QString codeLine;
+    QString mipsOut;
+    QString errorOut;
+    codeLines = code.split("\n");
+    singleRemips* remips;
+    remips = new singleRemips();
+    qDebug() << "construct remips";
+    foreach(codeLine, codeLines) {
+        if (codeLine.toStdString().size() == 0)
+            continue;
+        mipsOut = mipsOut + remips->translate(remips->num(codeLine.toStdString())).c_str() + "\n";
+        qDebug() << "translate done";
+    }
+    printToEdit(sourceEdit, mipsOut);
+    delete remips;
 }
 
 void MainWindow::singleStep(){

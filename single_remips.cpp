@@ -7,10 +7,11 @@
 //
 
 #include "single_remips.h"
-
-remips_dword singleRemips::num(std::string s)
+#include <string>
+#include <sstream>
+remips_dwrd singleRemips::num(std::string s)
 {
-    remips_dword ret=0;
+    remips_dwrd ret=0;
     for (int i=0;i<s.length();i++)
     {
         if (s[i]=='1')
@@ -22,12 +23,12 @@ remips_dword singleRemips::num(std::string s)
     return ret;
 }
 
-std::string singleRemips::check(remips_dword begin,remips_dword tail,int &type,int &openum)
+std::string singleRemips::check(remips_dwrd begin,remips_dwrd tail,int &type,int &openum)
 {
     std::string ret;
     if (begin==num("000000"))
     {
-        type=R;
+        type=0;
         for (int i=0;fuctoR[i][0]!="x";i++)
         {
             if (num(fuctoR[i][0])==tail)
@@ -41,7 +42,7 @@ std::string singleRemips::check(remips_dword begin,remips_dword tail,int &type,i
     {
         if (num(opetoI[i][1])==begin)
         {
-            type=I;
+            type=1;
             openum=i;
             return opetoI[i][0];
         }
@@ -50,7 +51,7 @@ std::string singleRemips::check(remips_dword begin,remips_dword tail,int &type,i
     {
         if (num(opetoJ[i][0])==begin)
         {
-            type=J;
+            type=2;
             openum=i;
             return opetoJ[i][1];
         }
@@ -58,18 +59,18 @@ std::string singleRemips::check(remips_dword begin,remips_dword tail,int &type,i
 
     return "xxx";
 }
-std::string singleRemips::name(remips_dword s)
+std::string singleRemips::name(remips_dwrd s)
 {
     return "$"+remips_regname[s];
 }
 
-std::string singleRemips::translate(remips_dword sin)
+std::string singleRemips::translate(remips_dwrd sin)
 {
     using namespace std;
     string ins;
     stringstream res;
     string sins;
-    remips_dword sig,tail;
+    remips_dwrd sig,tail;
     string anssig,ans;
     int type;
     int openum;
@@ -79,7 +80,7 @@ std::string singleRemips::translate(remips_dword sin)
     tail=(sin &0x0000003F);
     //res<<tail<<endl;
     anssig=check(sig,tail,type,openum);
-    if (type==R)
+    if (type==0)
     {
         unsigned int reg[4];
         std::string regname[4],exp;
@@ -117,7 +118,7 @@ std::string singleRemips::translate(remips_dword sin)
             }
         }
     }
-    if (type==I)
+    if (type==1)
     {
         unsigned int reg1,reg2,exp;
         reg1=(sin & 0x03E00000)>>21;
@@ -132,7 +133,7 @@ std::string singleRemips::translate(remips_dword sin)
             res<<anssig+" "+name(reg2)+","+name(reg1)+","<<exp<<endl;
         }
     }
-    if (type==J)
+    if (type==2)
     {
         unsigned long exp;
         exp=sin & 0x03FFFFFF;

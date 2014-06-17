@@ -10,19 +10,16 @@
 #define __remips__single_remips__
 
 #include <iostream>
-#include <string>
-#include <sstream>
-
-#define R 0
-#define I 1
-#define J 2
-typedef unsigned  remips_dword;//my OS is 64-bit
+//#define R 0
+//#define I 1
+//#define J 2
+typedef unsigned int remips_dwrd;//my OS is 64-bit
 
 const std::string remips_regname[32]={"zero","at","v0","v1","a0","a1","a2","a3",
     "t0","t1","t2","t3","t4","t5","t6","t7",
     "s0","s1","s2","s3","s4","s5","s6","s7",
     "t8","t9","k0","k1","gp","sp","fp","ra"};
-const std::string opetoI[][3]={
+const std::string opetoI[13][3]={
     "addi"	,"001000","n",
     "addiu"	,"001001","n",
     "andi"	,"001100","n",
@@ -37,12 +34,12 @@ const std::string opetoI[][3]={
     "sltiu"	,"001011","n",
     "x","x","x"
 };
-const std::string opetoJ[][2]={
+const std::string opetoJ[3][2]={
     "000010","j",
     "000011","jal",
     "x", "x"
 };
-const std::string fuctoR[][6]={
+const std::string fuctoR[19][6]={
     "100000","add","2","3","1","n",
     "100001","addu","2","3","1","n",
     "100010","sub","2","3","1","n",
@@ -68,10 +65,10 @@ class singleRemips
 {
 //private:
 public:
-    remips_dword num(std::string s);
-    std::string check(remips_dword begin,remips_dword tail,int &type,int &openum);
-    std::string name(remips_dword s);
-    std::string translate(remips_dword sin);
+    remips_dwrd num(std::string s);
+    std::string check(remips_dwrd begin,remips_dwrd tail,int &type,int &openum);
+    std::string name(remips_dwrd s);
+    std::string translate(remips_dwrd sin);
 };
 
 #endif /* defined(__remips__single_remips__) */
