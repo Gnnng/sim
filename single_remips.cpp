@@ -126,18 +126,18 @@ std::string singleRemips::translate(remips_dwrd sin)
         exp=sin & 0x0000FFFF;
         if (opetoI[openum][2]=="e")
         {
-            res<<anssig+" "+name(reg2)+","<<exp<<"("<<name(reg1)<<")"<<endl;
+            res<<anssig+" "+name(reg2)+","<<exp<<"("<<name(reg1)<<")";
         }
         else
         {
-            res<<anssig+" "+name(reg2)+","+name(reg1)+","<<exp<<endl;
+            res<<anssig+" "+name(reg2)+","+name(reg1)+","<<exp;
         }
     }
     if (type==2)
     {
         unsigned long exp;
         exp=sin & 0x03FFFFFF;
-        res<<anssig+" "<<exp<<endl;
+        res<<anssig+" "<<exp;
     }
 
     return res.str();

@@ -45,9 +45,10 @@ Highlighter::Highlighter(QTextDocument *parent)
                      "bgt",
                      "ble",
                      "bge",
-                     "syscall"
+                     "syscall",
+                     "la"
                     };
-    for(int i = 0; i < 37; i++) {
+    for(int i = 0; i < 38; i++) {
         QString temp = ins[i];
         temp = "\\b" + temp + "\\b";
         instructionPatterns.append(temp);
